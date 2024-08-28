@@ -1,0 +1,160 @@
+* {
+    background-color: darkblue;
+}
+
+.game {
+    width: 400px;
+    border: 3px solid #fff;
+    height: 300px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.text {
+    position: absolute;
+    left: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.diver {
+    width: 50px;
+    height: 50px;
+    background-image: url(runner.png);
+    background-size: 50px 50px;
+    position: absolute;
+    bottom: 120px;
+    left: 20px;
+    border: 1px solid silver;
+    z-index: 100;
+}
+
+/* .diver.action1 {
+    animation: action 1s linear;
+} */
+
+.banner {
+    display: none;
+    background: #fff;
+    height: 100%;
+    position: absolute;
+    z-index: 1000;
+    top: 0;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.banner p .counter {
+    background: #fff;
+}
+
+.banner.show {
+    display: flex;
+}
+
+.banner p {
+    background: #fff;
+    text-align: center;
+}
+
+.fish1 {
+    width: 40px;
+    height: 40px;
+    background-image: url(barrier-obstacle-svgrepo-com.svg);
+    background-size: 50px 50px;
+    position: absolute;
+    left: 730px;
+    animation: action2 infinite linear;
+    border: 1px solid silver;
+}
+
+.gamer-hp, .hp {
+    color: #fff;
+}
+
+.fish-top {
+    bottom: 230px
+}
+
+.fish-middle {
+    bottom: 50%;
+    transform: translateY(55%);
+}
+
+.fish-bottom {
+    bottom: 0;
+}
+
+.fish2 {
+    width: 80px;
+    height: 40px;
+    background-image: url(icons8-фонарь-80.png);
+    /* background-size: 100% 100%;
+    position: absolute;
+    bottom: 0;
+    left: 30px; */
+    background-size: 50px 50px;
+    position: absolute;
+    left: 730px;
+    animation: action3 infinite linear;
+    border: 1px solid silver;
+}
+
+.shark {
+    width: 80px;
+    height: 40px;
+    background-image: url(1937f5133b7f7027e7b70f24fa815962.jpg);
+    /* background-size: 100% 100%;
+    position: absolute;
+    bottom: 0;
+    left: 30px; */
+    background-size: 50px 50px;
+    position: absolute;
+    left: 730px;
+    animation: action3 infinite linear;
+    border: 1px solid silver;
+}
+
+.bigger {
+    width: 100px;
+    height: 80px;
+}
+
+.buffer {
+    width: 70px;
+    border: 1px solid silver;
+}
+
+.slow {
+    animation: action3 2.5s infinite linear;
+}
+
+.medium {
+    animation: action3 1.7s infinite linear;
+}
+
+.fast {
+    animation: action3 1s infinite linear;
+}
+
+/* @keyframes action {
+    0% { bottom: 0px; }
+    30% { bottom: 100px; }
+    50% { bottom: 150px; }
+    80% { bottom: 100px; }
+    100% { bottom: 0px; }
+} */
+
+@keyframes action2 {
+    0% { left: 450px; }
+    100% { left: -100px; }
+}
+
+@keyframes action3 {
+    0% { left: 450px; }
+    100% { left: -100px; }
+}
