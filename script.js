@@ -60,7 +60,6 @@ class DiverGame {
         if (sharkHP > 0 && fishLeft < this.bufferZone && fishLeft > 0) {
             this.handleSharkHit();
         } else if (fishLeft >= this.bufferZone && fishLeft < this.gameWidth && sharkHP == 0 && !this.isScored) {
-           console.log("cool");
             this.calcPoints(this.pointPerEnemy);
             this.isScored = true;
         }
@@ -90,7 +89,6 @@ class DiverGame {
 
     getRandomFish(el) {
         const fishesList = el.classList.contains("fish-middle") ? gameConfig.fishesToMiddle : gameConfig.fishs;
-        console.log(fishesList[Math.floor(Math.random() * fishesList.length)]);
         return fishesList[Math.floor(Math.random() * fishesList.length)];
     }
 
@@ -199,7 +197,6 @@ class DiverGame {
 
             if (fishLeft < -90) {
                 this.setFish(el); 
-                console.log(el.dataset.new);
                 el.dataset.new = true;
             }
 
