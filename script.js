@@ -55,13 +55,15 @@ class DiverGame {
 
         if (fishLeft < -90) {
             this.resetShark(el);
+            return;
         }
 
-        if (sharkHP > 0 && fishLeft < this.bufferZone && fishLeft > 0) {
+        if (sharkHP > 0 && fishLeft < this.bufferZone && fishLeft > 0 && !this.isHit) {
             this.handleSharkHit();
-        } else if (fishLeft >= this.bufferZone && fishLeft < this.gameWidth && sharkHP == 0 && !this.isScored) {
+        } 
+        
+        if (fishLeft > 0 && fishLeft < this.gameWidth && sharkHP == 0 && !this.isScored) {
             this.calcPoints(this.pointPerEnemy);
-            this.isScored = true;
         }
 
     }
@@ -133,13 +135,16 @@ class DiverGame {
     setFish(el) {
         const randomClassName = this.getRandomFish(el);
         this.fishs.forEach(fishClass => el.classList.remove(fishClass));
+
+        el.classList.add(randomClassName);
+        el.style.visibility = "";
+        el.style.animationDuration = `${this.enemySpeed}s`;
     
         if(el.classList.contains("fish-middle")) {
             if(randomClassName == "shark") {
-                // this.updateSharkHealth();
-                const hpElement = this.activeLine.querySelector(".hp");
-                hpElement.textContent = this.sharkHP; 
-
+                this.sharkHP = this.defaultSharkHP;
+                this.updateSharkHealth();
+            
             } else {
                 el.querySelector(".hp").textContent = "";
             }
@@ -147,9 +152,6 @@ class DiverGame {
             el.querySelector(".hp").textContent = "";
         }
 
-        el.classList.add(randomClassName);
-        el.style.visibility = "";
-        el.style.animationDuration = `${this.enemySpeed}s`;
     }
 
     calcPoints(points) {

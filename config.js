@@ -4,7 +4,7 @@ const gameConfig = {
     // среднее время игры
     gameAvarageTime: 3,
     // стандартная(начальная/максимальная) скорость движения
-    gameDefaultEnemySpeed: 4,
+    gameDefaultEnemySpeed: 2,
     // минимальная скорость движения
     gameMinEnemySpeed: 1.9,
     // счет нужный для выигрыша
