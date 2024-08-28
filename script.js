@@ -136,7 +136,10 @@ class DiverGame {
     
         if(el.classList.contains("fish-middle")) {
             if(randomClassName == "shark") {
-                this.updateSharkHealth();
+                // this.updateSharkHealth();
+                const hpElement = this.activeLine.querySelector(".hp");
+                hpElement.textContent = this.sharkHP; 
+
             } else {
                 el.querySelector(".hp").textContent = "";
             }
@@ -187,6 +190,8 @@ class DiverGame {
         }
     }
     
+    processedFishes = new Set();
+
     getCurrentPosition = () => {
 
         if(this.isEnd) return;
@@ -195,15 +200,14 @@ class DiverGame {
 
             const fishLeft = parseInt(getComputedStyle(el).left);
 
-            if (fishLeft < -90) {
-                this.setFish(el); 
-                el.dataset.new = true;
+            if (fishLeft <= -90) {
+                if (!this.processedFishes.has(el)) {
+                    this.setFish(el);
+                    this.processedFishes.add(el);
+                }
+            } else {
+                this.processedFishes.delete(el);
             }
-
-
-            if (fishLeft > this.gameWidth) {
-                el.dataset.new = false;
-            } 
 
             // провекра что это акула по середине
             if (el.classList.contains("fish-middle") && el.classList.contains("shark")) { 
