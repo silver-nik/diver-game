@@ -4,11 +4,13 @@ const gameConfig = {
     // среднее время игры
     gameAvarageTime: 3,
     // стандартная(начальная/максимальная) скорость движения
-    gameDefaultEnemySpeed: 2,
+    gameDefaultEnemySpeed: 4,
     // минимальная скорость движения
-    gameMinEnemySpeed: 1.9,
+    gameMinEnemySpeed: 1,
     // счет нужный для выигрыша
     gameScoreToWin: 2409,
+
+    url: 'https://jsonplaceholder.typicode.com/posts/',
 
     // массивы вариаций рыб и врагов
     fishs: ["fish1", "fish2"],
@@ -21,8 +23,8 @@ const gameConfig = {
 
     // веса для рыб (чем больше вес тем больше вероятность появления)
     fishesWeight: {
-        "fish1": 3,
-        "fish2": 3,
+        "fish1": 1,
+        "fish2": 1,
         "shark": 7 
     },
 
@@ -35,7 +37,7 @@ const gameConfig = {
 
     maxAvalibleSharkHP: 2,
     // очки за врага (если отключено динамическое вычисление)
-    pointsPerEnemy: 100,
+    // pointsPerEnemy: 2409,
 
 };
 

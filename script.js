@@ -1,107 +1,63 @@
-import { gameConfig } from './config.js';
+import { gameConfig } from './services/config.js';
+import BubbleContainer from './modules/canvas-bubble.js';
+import Diver from './modules/diver.js';
+import Shark from './modules/shark.js';
+import Fishes from './modules/fishes.js';
+
 
 class DiverGame {
     constructor() {
-        
-        this.bufferZone = gameConfig.bufferZone;
-        this.defaultSharkHP = gameConfig.defaultSharkHP;
-        this.defaultDiverHP = gameConfig.defaultDiverHP;
-        this.fishs = gameConfig.allFishes;
-        this.pointPerEnemy = gameConfig.pointsPerEnemy;
 
-        this.diverHP = this.defaultDiverHP; // текущие очки здоровья дайвера
-        this.sharkHP = this.defaultSharkHP; // текущие очки здоровья акулы
-        this.enemySpeed = gameConfig.gameDefaultEnemySpeed;
-        this.points = 0;  // текущие очки
+        this.initConfigs();
 
-        this.isHit = false; // флаг столкновения
-        this.isScored = false; // флаг засчитанных очков
         this.isEnd = false; // флаг конца игры
         this.isDifficult = false; // флаг увеличения сложности (для установки hp)
-        this.isNewFish = false; // флаг что рыба установлена                
+        this.points = 0;  // текущие очки
 
-        this.activeLine = document.querySelector('.fish-middle'); // линия середины (активная, где дайвер и акулы)
-        this.diver = document.querySelector('.diver'); 
-        this.fishElements = document.querySelectorAll('.fish');
-        this.text = document.querySelector('.text');
-        this.game = document.querySelector('.game');
-        this.gamerHp = document.querySelector('.gamer-hp');
-
-        this.gameWidth = parseInt(getComputedStyle(this.game).width);
-        this.animationFrame;
-
-        document.addEventListener("click", (e) => this.handleClick(e));
-
-        this.gamerHp.textContent = this.diverHP;
+        this.enemySpeeds = new Map();
+        this.processedFishes = new Set();;
         this.startTime = Date.now(); 
+        this.duration = 5;
+        this.opacity = 0;
 
-        this.initGame();
+        this.getElements();
+        this.initModules();
+
+        this.setStartModal();
 
     }
 
-    updateSharkHealth() {
-        const hpElement = this.activeLine.querySelector(".hp");
-        hpElement.textContent = this.sharkHP; 
+    getElements() {
+        this.activeLine = document.querySelector('.fish-middle'); // линия середины (активная, где дайвер и акулы)
+        this.fishElements = document.querySelectorAll('.fish');
+        this.fade = document.querySelector('.fade');
+        this.bubbles = document.querySelectorAll('.bubble');
     }
 
-    updateSharkSize() {
-        if(!this.activeLine.classList.contains("bigger")) {
-            this.activeLine.classList.add("bigger");
-        }
-    }
-
-    handleShark(el, fishLeft) {
-        const sharkHP = parseInt(el.querySelector(".hp").textContent, 10);
-
-        if (fishLeft < -90) {
-            this.resetShark(el);
-            return;
-        }
-
-        if (sharkHP > 0 && fishLeft < this.bufferZone && fishLeft > 0 && !this.isHit) {
-            this.handleSharkHit();
-        } 
+    initConfigs() {
+        const { bufferZone, defaultSharkHP, defaultDiverHP, url, gameDefaultEnemySpeed } = gameConfig;
         
-        if (fishLeft > 0 && fishLeft < this.gameWidth && sharkHP == 0 && !this.isScored) {
-            this.calcPoints(this.pointPerEnemy);
-        }
-
+        this.bufferZone = bufferZone;
+        this.defaultSharkHP = defaultSharkHP;
+        this.diverHP = defaultDiverHP;
+        this.sharkHP = defaultSharkHP; // текущие очки здоровья акулы
+        this.enemySpeed = gameDefaultEnemySpeed;
+        this.url = url;
     }
 
-    resetShark(el) {
-        this.sharkHP = this.defaultSharkHP;
-        this.setFish(el);    
-        this.isHit = false;
-        this.isScored = false;
-    }
+    initModules() {
+        this.bubble = new BubbleContainer("canvas");
+        this.diverModule = new Diver();
+        this.sharkModule = new Shark();
+        this.fishesModule = new Fishes();
 
-    handleSharkHit() {
-        if(!this.isHit) {
-            this.diverHP--;
-            this.isHit = true;
-            this.gamerHp.textContent = this.diverHP;        
-        }
-    }
+        this.sharkModule.setFishesModule(this.fishesModule);
+        this.sharkModule.setDiverModule(this.diverModule);
 
-    updateFishSpeed() {
-        this.fishElements.forEach(el => {
-            el.style.animationDuration = `${this.enemySpeed}s`;
-        });
-    }
+        this.fishesModule.setSharkModule(this.sharkModule);
+        this.diverModule.setSharkModule(this.sharkModule);
 
-    getRandomFish(el) {
-        const fishesList = el.classList.contains("fish-middle") ? gameConfig.fishesToMiddle : gameConfig.fishs;
-        return fishesList[Math.floor(Math.random() * fishesList.length)];
-    }
-
-    handleClick() {
-        this.diver.classList.add('action1');
-        setTimeout(() => this.diver.classList.remove('action1'), 1000);
-
-        if(this.sharkHP > 0 && this.activeLine.classList.contains("shark")) {
-            this.sharkHP--;
-            this.updateSharkHealth();
-        }
+        document.addEventListener("click", (e) => this.diverModule.handleClick(e));
     }
 
     increaseDifficult() {
@@ -109,137 +65,207 @@ class DiverGame {
         if(this.isEnd) return;
 
         const elapsedTimeSecond = (Date.now() - this.startTime) / 1000;
-        const gameSpeed = gameConfig.gameDefaultEnemySpeed / Math.exp(0.01 * elapsedTimeSecond);
+        const gameSpeed = gameConfig.gameDefaultEnemySpeed / Math.exp(0.0001 * elapsedTimeSecond);
+        this.enemySpeed = gameSpeed <= gameConfig.gameMinEnemySpeed ? gameConfig.gameMinEnemySpeed : gameSpeed;
 
-        if(gameSpeed <= gameConfig.gameMinEnemySpeed) {
-            this.enemySpeed = gameConfig.gameMinEnemySpeed;
-        } else {
-            this.enemySpeed = gameSpeed;
-        }
-
-        this.updateFishSpeed();
-
-        const midGameTime = (gameConfig.gameAvarageTime / 2) * 60;
-        
-        if (elapsedTimeSecond > midGameTime && !this.isDifficult && parseInt(window.getComputedStyle(this.activeLine).left) <= -90) {
-            this.defaultSharkHP = gameConfig.maxAvalibleSharkHP;
-
-            this.updateSharkSize();
-            
-            this.isDifficult = true;
-        }
+        this.fishesModule.updateFishSpeed(elapsedTimeSecond, this.enemySpeeds);
+        this.sharkModule.updateDifficult(elapsedTimeSecond);
 
         this.animationSpeed = requestAnimationFrame(() => this.increaseDifficult());        
     }
 
-    setFish(el) {
-        const randomClassName = this.getRandomFish(el);
-        this.fishs.forEach(fishClass => el.classList.remove(fishClass));
-
-        el.classList.add(randomClassName);
-        el.style.visibility = "";
-        el.style.animationDuration = `${this.enemySpeed}s`;
-    
-        if(el.classList.contains("fish-middle")) {
-            if(randomClassName == "shark") {
-                this.sharkHP = this.defaultSharkHP;
-                this.updateSharkHealth();
-            
-            } else {
-                el.querySelector(".hp").textContent = "";
-            }
-        } else {
-            el.querySelector(".hp").textContent = "";
-        }
-
-    }
-
-    calcPoints(points) {
-        this.points += points;
-        this.text.textContent = this.points;
-    }
-
     endGame() {
         this.fishElements.forEach(fish =>  {
-            this.activeLine.style.left = this.bufferZone + "px";
+            this.activeLine.style.left = `${this.bufferZone}px`;
             fish.style.left = window.getComputedStyle(fish).left;
             fish.style.animation = "none";
         });
         
-        this.diver.style.transform = "rotate(180deg)";
         this.isEnd = true;
         cancelAnimationFrame(this.animationFrame);
         cancelAnimationFrame(this.animationSpeed);
+        this.finalAnimation();
     }
 
-    setLose() {
-        console.log('Sum is less than 2409. Try again.');
-        this.endGame();
-    }
+    finalAnimation() {
 
-    setWin() {
-        console.log('Sum is 2409 or more. Excellent!');
-        this.endGame();
-    }
+        if(this.opacity < 1) {
+            this.opacity += 0.01;
+            this.fade.style.opacity = this.opacity;
+        }
 
-    setResultModal(sum) {
-        if (sum < gameConfig.gameScoreToWin) {
-            this.setLose();
-        } else if (sum >= gameConfig.gameScoreToWin) {
-            this.setWin();
+        if(this.duration > 1) {
+            this.duration += 0.01;
+            this.bubbles.forEach(bubble => {
+                bubble.style.animationDuration = `${this.duration}s`;
+            })
+        }
+
+        if(this.opacity < 1 || this.duration < 2) {
+            requestAnimationFrame(() => this.finalAnimation());
+            this.bubble.clearCanvas();
+            this.bubble.setBubbleArr();
         } else {
-            console.log('Invalid sum');
+            this.bubble.moveBubble();
+            this.setFinishModal();
+        }
+        
+    }
+
+    setResultModal(win) {
+        win ? console.log('Равно или выше 2049') : console.log('Сумма меньше 2409. Попробуйте снова');
+        this.endGame();
+    }
+
+    async postResource(url, data) {
+
+        if(typeof data.tg_id === 'number' && typeof data.result === 'number') {
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json; charset=UTF-8',
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then((response) => response.json())
+                .then((json) => console.log(json))
+                .catch(error => {
+                    console.log('Error');
+                }); 
+            } catch(e) {    }
+        } else {
+            console.log("scss");
         }
     }
-    
-    processedFishes = new Set();
+
+    resetGame() {
+
+        this.initConfigs();
+        this.bubble.clearCanvas();
+        this.bubble.setBubbleArr();
+
+        this.points = 0;  // текущие очки
+        this.isEnd = false; // флаг конца игры
+        this.isDifficult = false; // флаг увеличения сложности (для установки hp)
+
+        this.enemySpeeds.clear();
+        this.startTime = Date.now(); 
+        this.bubble = new BubbleContainer("canvas");
+
+        this.duration = 5;
+        this.opacity = 0;
+        this.fade.style.opacity = 0;
+
+        this.diverModule.resetGame();
+        this.sharkModule.resetGame();
+        this.fishesModule.resetGame();
+  
+        this.initGame();
+
+    }
+
+    initGame() {
+        this.fade.style.opacity = "0";
+
+        this.fishElements.forEach(el => {
+            el.style.animation = "action3 infinite linear";
+            const speedDefault = Math.random() * ((gameConfig.gameDefaultEnemySpeed - 1) - gameConfig.gameMinEnemySpeed) + 2;
+            this.enemySpeeds.set(el, speedDefault);
+            this.fishesModule.setFish(el);
+        })
+
+        this.getCurrentPosition();
+        this.increaseDifficult();
+    }
 
     getCurrentPosition = () => {
 
         if(this.isEnd) return;
 
         this.fishElements.forEach(el => {
-
             const fishLeft = parseInt(getComputedStyle(el).left);
 
             if (fishLeft <= -90) {
                 if (!this.processedFishes.has(el)) {
-                    this.setFish(el);
+                    this.fishesModule.setFish(el);
                     this.processedFishes.add(el);
                 }
             } else {
                 this.processedFishes.delete(el);
             }
 
-            // провекра что это акула по середине
             if (el.classList.contains("fish-middle") && el.classList.contains("shark")) { 
-                this.handleShark(el, fishLeft);
+                this.sharkModule.handleShark(el, fishLeft);
             }
 
         });
 
-        // проверка, что дайвер убит
-        if(this.diverHP <= 0) {
-            this.setResultModal(this.points);
+        if(this.diverModule.diverHP <= 0) {
+            this.points < gameConfig.gameScoreToWin ? this.setResultModal(this.points, false) : this.setResultModal(this.points, true);
         }
 
-        if(this.sharkHP == 0) {
+        if(this.sharkModule.sharkHP == 0) {
             this.activeLine.querySelector(".hp").textContent = "";
         }
 
-        this.animationFrame = requestAnimationFrame(this.getCurrentPosition);
+        if(this.sharkModule.points >= gameConfig.gameScoreToWin) {
+            this.setResultModal(true);
+        }
 
-    }   
-    
-    initGame() {
-        this.fishElements.forEach(el => {
-            this.setFish(el);
+        this.animationFrame = requestAnimationFrame(this.getCurrentPosition);
+    }
+
+    setFinishModal() {
+        let modal = document.createElement("div");
+        modal.classList.add("modal");
+
+        modal.innerHTML = `
+            <div class="modal-content">
+                <p>текст поздравления</p>
+                <button id="play-again">Сыграть ещё раз</button>
+                <button id="exit">Выйти</button>
+            </div>
+        `;
+
+        this.postResource(this.url, {
+            tg_id: 0,
+            result: this.sharkModule.points
         })
 
-        this.increaseDifficult();
-        this.getCurrentPosition();
+        document.querySelector(".fade").prepend(modal);
+
+        document.querySelector('#play-again').addEventListener('click', () => {
+            this.resetGame();
+            modal.remove();
+        });
+
+        document.querySelector('#exit').addEventListener('click', () => {
+            modal.remove();
+        });
+    }
+
+    setStartModal() {
+        let modal = document.createElement("div");
+        modal.classList.add("modal");
+
+        modal.innerHTML = `
+            <div class="modal-content">
+                <p>текст приветственный</p>
+                <button id="play-start">ПОПЛЫЛИ</button>
+            </div>
+        `;
+
+        this.fade.style.opacity = "1";
+        this.fade.prepend(modal);
+
+        document.querySelector('#play-start').addEventListener('click', () => {
+            this.initGame();
+            modal.remove();
+        });
 
     }
+
 }
 
 document.addEventListener("DOMContentLoaded", () => new DiverGame());
