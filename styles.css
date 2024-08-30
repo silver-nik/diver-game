@@ -75,6 +75,7 @@ body, .fade, .game {
     background-size: 50px 50px;
     position: absolute;
     border: 1px solid silver;
+    left: 450px;
 }
 
 .gamer-hp, .hp {
@@ -101,6 +102,7 @@ body, .fade, .game {
     background-size: 50px 50px;
     position: absolute;
     border: 1px solid silver;
+    left: 450px;
 }
 
 .shark {
@@ -110,6 +112,7 @@ body, .fade, .game {
     background-size: 50px 50px;
     position: absolute;
     border: 1px solid silver;
+    left: 450px;
 }
 
 .bigger {
@@ -154,14 +157,5 @@ canvas {
     justify-content: center;
 }
 
-@keyframes action2 {
-    0% { left: 450px; }
-    100% { left: -100px; }
-}
-
-@keyframes action3 {
-    0% { left: 450px; }
-    100% { left: -100px; }
-}
 
 

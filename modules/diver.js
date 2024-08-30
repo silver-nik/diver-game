@@ -11,6 +11,8 @@ class Diver {
         this.diver = document.querySelector('.diver'); 
         this.gamerHp = document.querySelector('.gamer-hp');
         this.text = document.querySelector('.text');
+        this.game = document.querySelector('.game');
+        this.gameWidth = parseInt(getComputedStyle(this.game).width);
     }
 
     initConfigs() {
@@ -30,8 +32,10 @@ class Diver {
         if (e.target.closest('.modal') || e.target === document.querySelector('.modal')) return;
 
         if(this.sharkModule.sharkHP > 0 && this.activeLine.classList.contains("shark")) {
-            this.sharkModule.hitByHealth();
-            this.sharkModule.updateSharkHealth();
+            if(parseInt(getComputedStyle(this.activeLine).left) < this.gameWidth) {
+                this.sharkModule.hitByHealth();
+                this.sharkModule.updateSharkHealth();
+            }
         } 
         
     }

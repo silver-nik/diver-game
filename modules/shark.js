@@ -7,7 +7,7 @@ class Shark {
     }
 
     getElements() {
-        this.activeLine = document.querySelector('.fish-middle'); // линия середины (активная, где дайвер и акулы)
+        this.activeLine = document.querySelector('.fish-middle');
         this.text = document.querySelector('.text');
         this.game = document.querySelector('.game');
         this.gamerHp = document.querySelector('.gamer-hp');
@@ -30,7 +30,6 @@ class Shark {
 
     setDiverModule(diverModule) {
         this.diverModule = diverModule;
-        console.log(diverModule);
     }
 
     hitByHealth() {
@@ -44,23 +43,23 @@ class Shark {
         if(!shark) {
             this.activeLine.classList.remove("bigger");
         } else {
-            if(elapsedTimeSecond > midGameTime && parseInt(getComputedStyle(shark).left) <= -90) {            
+            if(elapsedTimeSecond > midGameTime && parseInt(getComputedStyle(shark).left) > 400) {            
                 this.defaultSharkHP = gameConfig.maxAvalibleSharkHP;
                 this.updateSharkSize();
             } 
         }
     }
 
-    updateSharkHealth() {
+    updateSharkHealth(hp = this.sharkHP) {
         const hpElement = this.activeLine.querySelector(".hp");
-        hpElement.textContent = this.sharkHP; 
+        hpElement.textContent = hp; 
     }
 
     updateSharkSize() {
         const shark = document.querySelector(".shark");
         if(shark && !shark.classList.contains("bigger")) {
-            this.activeLine.classList.add("bigger");
-            this.updateSharkHealth();
+            shark.classList.add("bigger");
+            this.updateSharkHealth(gameConfig.maxAvalibleSharkHP);
         }
     }
 
@@ -73,9 +72,12 @@ class Shark {
 
         const sharkHP = parseInt(el.querySelector(".hp").textContent, 10);
 
-        if (fishLeft < -90) {
+        if (fishLeft <= -70) {
             this.resetShark(el);
-            return;
+        }
+
+        if(this.sharkHP == 0) {
+            this.activeLine.querySelector(".hp").textContent = "";
         }
 
         if (sharkHP > 0 && fishLeft < this.bufferZone && fishLeft > 0 && !this.isHit) {
@@ -90,8 +92,8 @@ class Shark {
     }
 
     resetShark(el) {
-        this.sharkHP = this.defaultSharkHP;
         this.fishesModule.setFish(el);  
+        this.sharkHP = this.defaultSharkHP;
         this.isHit = false;
         this.isScored = false;
     }

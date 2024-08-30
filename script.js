@@ -11,7 +11,6 @@ class DiverGame {
         this.initConfigs();
 
         this.isEnd = false; // флаг конца игры
-        this.isDifficult = false; // флаг увеличения сложности (для установки hp)
         this.points = 0;  // текущие очки
 
         this.enemySpeeds = new Map();
@@ -32,6 +31,8 @@ class DiverGame {
         this.fishElements = document.querySelectorAll('.fish');
         this.fade = document.querySelector('.fade');
         this.bubbles = document.querySelectorAll('.bubble');
+        this.game = document.querySelector('.game');
+        this.gameWidth = parseInt(getComputedStyle(this.game).width);
     }
 
     initConfigs() {
@@ -62,23 +63,33 @@ class DiverGame {
 
     increaseDifficult() {
 
-        if(this.isEnd) return;
+        if (this.isEnd) return;
 
         const elapsedTimeSecond = (Date.now() - this.startTime) / 1000;
-        const gameSpeed = gameConfig.gameDefaultEnemySpeed / Math.exp(0.0001 * elapsedTimeSecond);
-        this.enemySpeed = gameSpeed <= gameConfig.gameMinEnemySpeed ? gameConfig.gameMinEnemySpeed : gameSpeed;
 
-        this.fishesModule.updateFishSpeed(elapsedTimeSecond, this.enemySpeeds);
+        this.fishElements.forEach(el => {
+            const fishLeft = parseInt(getComputedStyle(el).left);
+
+            if (fishLeft <= -90) {
+                const speedDefault = Math.random() * ((gameConfig.gameDefaultEnemySpeed - 1) - gameConfig.gameMinEnemySpeed) + 2;
+                this.enemySpeeds.set(el, speedDefault);
+                el.style.left = `${this.gameWidth + this.bufferZone}px`;
+            }else {
+                el.style.left = `${fishLeft - this.enemySpeeds.get(el)}px`;
+            }
+
+            this.fishesModule.updateFishSpeed(elapsedTimeSecond, this.enemySpeeds);
+        });
+
         this.sharkModule.updateDifficult(elapsedTimeSecond);
+        this.animationSpeed = requestAnimationFrame(() => this.increaseDifficult());
 
-        this.animationSpeed = requestAnimationFrame(() => this.increaseDifficult());        
     }
 
     endGame() {
         this.fishElements.forEach(fish =>  {
             this.activeLine.style.left = `${this.bufferZone}px`;
             fish.style.left = window.getComputedStyle(fish).left;
-            fish.style.animation = "none";
         });
         
         this.isEnd = true;
@@ -96,9 +107,6 @@ class DiverGame {
 
         if(this.duration > 1) {
             this.duration += 0.01;
-            this.bubbles.forEach(bubble => {
-                bubble.style.animationDuration = `${this.duration}s`;
-            })
         }
 
         if(this.opacity < 1 || this.duration < 2) {
@@ -147,7 +155,6 @@ class DiverGame {
 
         this.points = 0;  // текущие очки
         this.isEnd = false; // флаг конца игры
-        this.isDifficult = false; // флаг увеличения сложности (для установки hp)
 
         this.enemySpeeds.clear();
         this.startTime = Date.now(); 
@@ -172,6 +179,8 @@ class DiverGame {
             el.style.animation = "action3 infinite linear";
             const speedDefault = Math.random() * ((gameConfig.gameDefaultEnemySpeed - 1) - gameConfig.gameMinEnemySpeed) + 2;
             this.enemySpeeds.set(el, speedDefault);
+            el.style.left = `${this.gameWidth + this.bufferZone}px`;
+
             this.fishesModule.setFish(el);
         })
 
@@ -183,14 +192,15 @@ class DiverGame {
 
         if(this.isEnd) return;
 
-        this.fishElements.forEach(el => {
+        this.fishElements.forEach((el, i) => {
             const fishLeft = parseInt(getComputedStyle(el).left);
 
             if (fishLeft <= -90) {
                 if (!this.processedFishes.has(el)) {
                     this.fishesModule.setFish(el);
                     this.processedFishes.add(el);
-                }
+                }  
+
             } else {
                 this.processedFishes.delete(el);
             }
