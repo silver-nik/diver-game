@@ -7,7 +7,7 @@ class Bubble {
 	    this.dy = Math.random() * 2 + 2;
 
         this.image = new Image();
-        this.image.src = "../assets/pixell.png";
+        this.image.src = "./assets/pixell.png";
     }
 
     draw(ctx) {
