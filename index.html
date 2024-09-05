@@ -12,29 +12,40 @@
 
         <div class="game">
 
-            <div>
-                <p class="">Очков: <span class="text">0</span></p>
-                <p>Жизни героя: <span class="gamer-hp"></span></p>
+            <img src="./assets/logo.svg" class="logo">
+
+            <canvas width="1000" height="1000" id="canvas1"></canvas>
+
+            <div class="game__status-bar">
+                <div class="points">
+                    <span class="text">0</span>
+                    <div class="icon-shark">
+                        <img src="./assets/shark-icon.png" alt="" class="w-icon h-icon icon">
+                    </div>
+                </div>
+                <div class="health">
+                    <span class="gamer-hp"></span>
+                    <div class="icon-heart">
+                        <img src="./assets/heart.svg" alt="" class="icon">
+                    </div>
+                </div>
             </div>
 
-            <div class="diver"></div>
+            <div class="diver">
+                <img src="./assets/diver.png" class="normal" alt="">
+                <img src="./assets/diver-action.png" class="toggle hidden" alt="">
+            </div>
 
             <div class="buffer"></div>
 
-            <div class="fish fish-top fish1" dataset-new="">
-                <div class="hp"></div>
-            </div> 
-            
-            <div class="fish fish-middle fish2" dataset-new="">
-                <div class="hp"></div>
-            </div> 
-
-            <div class="fish fish-bottom fish1" dataset-new="">
-                <div class="hp"></div>
-            </div> 
-
             <div class="fade">
                 <canvas width="1000" height="1000" id="canvas"></canvas>
+            </div>
+
+            <div class="bg">
+                <img src="./assets/bg.png" alt="" class="bg-first">
+                <img src="./assets/bg-2.png" alt="" class="bg-second">
+                <img src="./assets/bg-3.png" alt="" class="bg-third">
             </div>
 
         </div>
@@ -43,6 +54,25 @@
 
 </body>
 
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+    const bot = window.Telegram.WebApp;
+    bot.headerColor = '#132c46'
+    bot.backgroundColor = '#132c46'
+    if (localStorage.fl === undefined) {
+        localStorage.clear()
+        localStorage.fl = false
+    }
+    try {
+        if (localStorage.uid === undefined || localStorage.uid !== bot.initDataUnsafe.user.id) {
+            localStorage.uid = bot.initDataUnsafe.user.id
+        }
+    } catch (err)  {
+
+    }
+
+    const uid = localStorage.uid
+</script>
 <script type="module" src="./script.js"></script>
 <script type="module" src="./services/config.js"></script>
 <script type="module" src="./services/config-func.js"></script>

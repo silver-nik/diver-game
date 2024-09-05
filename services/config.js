@@ -2,7 +2,7 @@ import { calcPointNum, setFishesArrayToMidByWeight } from './config-func.js';
 
 const gameConfig = {
     // среднее время игры
-    gameAvarageTime: 3,
+    gameAvarageTime: 5,
     // стандартная(начальная/максимальная) скорость движения
     gameDefaultEnemySpeed: 4,
     // минимальная скорость движения
@@ -10,11 +10,26 @@ const gameConfig = {
     // счет нужный для выигрыша
     gameScoreToWin: 2409,
 
-    url: 'https://jsonplaceholder.typicode.com/posts/',
+    url: 'https://jsonplaceholder.typicode.com/posts/', // endpoint https://ptgame.idurn.ru/save_game_result
 
-    // массивы вариаций рыб и врагов
-    fishs: ["fish1", "fish2"],
-    enemies: ["shark"],
+    npcImages: ['./assets/npc.png', './assets/npc-2.png', './assets/npc-3.png', './assets/npc-4.png', './assets/npc-5.png', './assets/npc-6.png', './assets/npc-7.png', './assets/npc-8.png', './assets/npc-9.png'],
+    increaseHpIcon: './assets/heart-icon.svg',
+    decreaseHpIcon: './assets/heart-icon-lse.svg',
+
+    enemies: [
+        {
+            img: './assets/shark.png',
+            hp: 1,
+        },
+        {
+            img: './assets/shark-mid.png',
+            hp: 2,
+        },
+        {
+            img: './assets/shark-big.png',
+            hp: 3,
+        }
+    ],
 
     // массив рыб для центральной линии (формируется из fishesWeight)
     fishesToMiddle: [],
@@ -35,13 +50,13 @@ const gameConfig = {
     defaultSharkHP: 1,
     defaultDiverHP: 1,
 
-    maxAvalibleSharkHP: 2,
+    maxAvalibleSharkHP: 3,
     // очки за врага (если отключено динамическое вычисление)
     // pointsPerEnemy: 2409,
 
 };
 
-gameConfig.allFishes = [...gameConfig.fishs, ...gameConfig.enemies];
+// gameConfig.allFishes = [...gameConfig.fishs, ...gameConfig.enemies];
 
 gameConfig.fishesToMiddle = setFishesArrayToMidByWeight(gameConfig.fishesWeight);
 

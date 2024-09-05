@@ -1,37 +1,183 @@
-body, .fade, .game {
+body, .game {
     background-color: darkblue;
+    /* height: 100vh; */
+    overflow: hidden;
+    font-family: 'Mont', sans-serif;
+    box-sizing:border-box;
+
+}
+
+.w-icon {
+    width: 38px;
+}
+
+.h-icon {
+    height: 31px;
 }
 
 .game {
-    max-width: 400px;
-    border: 3px solid #fff;
-    height: 400px;
-    margin: 0 auto;
+    /* max-width: 400px;
+    border: 3px solid #fff; */
+    /* height: 400px; */
+    /* margin: 0 auto;
     position: relative;
     overflow: hidden;
     width: 100%;
+    height: 100%;
+    background: url('./assets/bg-pattern.png') no-repeat;
+    background-size: 100% 100%; */
+
+    max-width: 430px;
+    border: 3px solid #fff;
+    height: 99%;
+    margin: 0 auto;
+    position: absolute;
+    overflow: hidden;
+    width: 100%;
+    /* height: 100%; */
+    background: url(./assets/bg-pattern.png) no-repeat;
+    background-size: 100% 100%;
+    top: 0;
+    margin: 0 auto;
+    left: 50%;
+    transform: translateX(-50%);
+
 }
 
-.text {
+.bg-first, .bg-second, .bg-third {
+    position: absolute;
+}
+
+.bg-first {
+    z-index: 20;
+    bottom: 0;
+}
+
+.bg-second {
+    bottom: -20px;
+    z-index: 10;
+}
+
+.bg-third {
+    bottom: -40px;
+}
+
+/* .text {
     position: absolute;
     left: 50%;
     transform: translateY(-50%);
     color: #fff;
     text-transform: uppercase;
-}
+} */
 
 .diver {
-    width: 50px;
-    height: 50px;
-    background-image: url(./assets/runner.png);
+    /* width: 50px;
+    height: 50px; */
+    /* background-image: url(./assets/diver.svg); */
     background-size: 50px 50px;
     position: absolute;
-    bottom: 50%;
-    transform: translateY(50%);
-    left: 20px;
-    border: 1px solid silver;
     z-index: 100;
-    background-color:#fff; 
+
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -300px;
+
+    width: 144px;
+    height: 209px;
+
+    transition: all 1s ease-in-out; 
+    opacity: 0;
+
+}
+
+.diver.active {
+    bottom: 5%;
+    opacity: 1;
+}
+
+.diver img {
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+.points {
+    width: 139px;
+    height: 48px;
+    z-index: 100000;
+    color: #fff;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 42px;
+    text-align: center;
+    background: #0C1A33;
+    border: 2px solid #253E6C;
+    border-radius: 4px;
+    display: flex;
+    position: relative;
+    align-items: center;
+    padding: 0 15px 0 0;
+    box-sizing: border-box;
+    justify-content: space-between;
+}
+
+.icon-shark {
+    display: flex;
+    align-items: center;
+}
+
+
+.icon-shark .icon {
+    width: 38px;
+    height: 31px;
+}
+
+.text {
+    flex: 1;
+    text-align: center;
+}
+
+.health {
+    width: 84px;
+    height: 48px;
+    z-index: 100000;
+    color: #fff;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 42px;
+    text-align: center;
+    background: #0C1A33;
+    border: 2px solid #253E6C;
+    border-radius: 4px;
+    display: flex;
+    position: relative;
+    align-items: center;
+    padding: 0 15px 0 0;
+    box-sizing: border-box;
+    justify-content: space-between;
+    margin-left: 42px;
+}
+
+.icon-heart {
+    display: flex;
+    align-items: center;
+}
+
+
+.icon-heart .icon {
+    width: 30px;
+    height: 26px;
+}
+
+.gamer-hp {
+    flex: 1;
+    text-align: center;
 }
 
 .banner {
@@ -75,7 +221,8 @@ body, .fade, .game {
     background-size: 50px 50px;
     position: absolute;
     border: 1px solid silver;
-    left: 450px;
+    /* left: 450px; */
+    top: 5%;
 }
 
 .gamer-hp, .hp {
@@ -83,16 +230,23 @@ body, .fade, .game {
 }
 
 .fish-top {
-    top: 100px;
+    /* top: 100px; */
+
+    left: 5%;
+
 }
 
 .fish-middle {
-    bottom: 50%;
-    transform: translateY(50%);
+    /* bottom: 50%;
+    transform: translateY(50%); */
+
+    left: 45%;
 }
 
 .fish-bottom {
-    bottom: 100px;
+    /* bottom: 100px; */
+
+    left: 20%;
 }
 
 .fish2 {
@@ -102,7 +256,28 @@ body, .fade, .game {
     background-size: 50px 50px;
     position: absolute;
     border: 1px solid silver;
-    left: 450px;
+    /* left: 450px; */
+    top: 5%;
+}
+
+.game__status-bar {
+    position: absolute;
+    z-index: 100;
+    top: -5%;
+    right: 20px;
+
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+
+    transition: all 1s ease-in-out;
+    opacity: 0;
+    
+}
+
+.game__status-bar.active {
+    top: 20px;
+    opacity: 1;
 }
 
 .shark {
@@ -112,7 +287,8 @@ body, .fade, .game {
     background-size: 50px 50px;
     position: absolute;
     border: 1px solid silver;
-    left: 450px;
+    /* left: 450px; */
+    top: 5%;
 }
 
 .bigger {
@@ -125,6 +301,11 @@ body, .fade, .game {
     border: 1px solid silver;
 } */
 
+.fish {
+    left: 0;
+    top: 0;
+}
+
 /* bubbles */
 
 .fade {
@@ -136,11 +317,45 @@ body, .fade, .game {
     justify-content: space-between;
     z-index: 1000;
     opacity: 0;
+    /* pointer-events: none; */
 }
 
 canvas {
-    width: 100%;
-    height: 100%;
+    /* width: 100%;
+    height: 100%; */
+}
+
+#canvas1 {
+    z-index: 15;
+    position: relative;
+}
+
+.red-btn {
+    height: 48px;
+    background: #FF0000;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 24px;
+    text-align: center;   
+    width: 207px; 
+    border: none;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.dark-btn {
+    border: 2px solid #253E6C;
+    width: 207px;
+    height: 48px;
+    background: #0C1A33;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 24px;
+    text-align: center; 
+    border-radius: 4px;
+    text-transform: uppercase;
 }
 
 .modal {
@@ -151,11 +366,130 @@ canvas {
     transform: translate(50%, -50%);
     width: 100%;
     height: 100%;
-    display: flex;
+    /* display: flex;
     align-items: center;
     flex-direction: column;
+    justify-content: center; */
+
+    /* height: 100%; */
+    background: url(./assets/bg-pattern.png) no-repeat;
+    background-size: 100% 100%;
+    top: 0;
+    margin: 0 auto;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* start modal (game styles) */
+
+.logo {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 117px;
+    width: 100%;
+}
+
+#canvas {
+    position: relative;
+    pointer-events: none;
+}
+
+.title {
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 40px;
+    text-align: center;
+    color: #FFFFFF;
+    margin: 0;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+.preview {
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 24px;
+    text-align: center;
+    color: #90B3E8;
+    display: flex;
+   flex-direction: column;
+   justify-content: center; 
+   margin-top: 40px;
+   margin-bottom: 46px;
+}
+
+.preview span {
+    font-size: 24px;
+    line-height: 32px;
+    text-align: center;
+    color: #fff;;
+}
+
+#play-start {
+    box-sizing: border-box;
+    height: 48px;
+    background: #FF0000;
+    border-radius: 4px;
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 24px;
+    text-align: center;
+    text-transform: uppercase;
+    color: #fff;
+    border: none;
+    padding: 0 20px;
+    width: fit-content;
+}
+
+.modal-content.start-modal {
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 
+.bg-modal {
+    bottom: 0;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    z-index: -1;
+    height: 50%;
+}
 
+.finish-title {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 40px;
+    text-align: center;
+    color: #fff;
+    margin: 0;
+    margin-bottom: 24px;
+    width: 100%;
+    max-width: 320px;
+}
+
+.finish-text {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32px;
+    text-align: center;
+    color: #fff;
+    margin: 0;
+    max-width: 320px;
+    width: 100%;
+}
+
+#play-again {
+    margin-top: 34px;
+    margin-bottom: 20px;
+}

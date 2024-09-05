@@ -1,5 +1,4 @@
 let calcPointNum = (min, fishSpeed, fishArr, enemyWeight, value) => {
-    console.log(fishArr);
     // время игры из минут в секунды
     const sec = min * 60;
     // количество рыб за указанное время

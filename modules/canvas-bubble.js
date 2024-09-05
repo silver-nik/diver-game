@@ -3,46 +3,53 @@ class Bubble {
         this.x = x;
         this.y = y;
         this.radius = radius;
-        this.dx = Math.random() * 2 - 1;
-	    this.dy = Math.random() * 2 + 1;
+        this.dx = Math.random() * 2 + 1;
+	    this.dy = Math.random() * 2 + 2;
+
+        this.image = new Image();
+        this.image.src = "../assets/pixell.png";
     }
 
     draw(ctx) {
 
-        ctx.save();
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.7)";
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-        ctx.stroke();
-        ctx.closePath();
-        ctx.restore();
+        if (!this.image.complete) {
+            return;
+        }
 
         ctx.save();
-        ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
         ctx.beginPath();
-        ctx.arc(this.x + this.radius * 2 * 0.1, this.y + this.radius * 2 * -0.3, this.radius / 2 * 0.5, 0, 2 * Math.PI);
-        ctx.fill();
+        ctx.drawImage(this.image, this.x, this.y, this.image.width, this.image.height);
         ctx.closePath();
         ctx.restore();
 
     }
 
     move() {
-        this.x -= this.dx;
         this.y -= this.dy;
     }
 }
 
 class BubbleContainer {
-    constructor(container) {
-        this.canvas = document.querySelector(container);
-        this.context = this.canvas.getContext("2d");
-        this.bubbles = [];
-        this.max = 10;
+    constructor() {
 
-        this.maxBubbleSize = 200;
-        this.minBubbleSize = 100;
+        this.canvas = document.getElementById('canvas');
+        this.context = this.canvas.getContext('2d');
+    
+        this.game = document.querySelector('.game');
+        this.playerElement = document.querySelector('.diver');
+        this.gameWidth = parseInt(getComputedStyle(this.game).width);
+        this.gameHeight = parseInt(getComputedStyle(this.game).height);
+        this.fade = document.querySelector('.fade');
+
+    
+        this.canvas.width = this.gameWidth;
+        this.canvas.height = this.gameHeight;
+
+        this.bubbles = [];
+        this.max = 70;
+
+        this.maxBubbleSize = 70;
+        this.minBubbleSize = 50;
 
         this.isEnd = false;
     }
@@ -60,9 +67,10 @@ class BubbleContainer {
     }
 
     createBubble() {
-        let x = Math.floor(Math.random() * this.canvas.width);
+        let x = Math.floor(Math.random() * (this.canvas.width)) - 100;
         let y = this.canvas.height + Math.floor(Math.random() * this.canvas.height);
         let radius = Math.floor(Math.random() * (this.maxBubbleSize - this.minBubbleSize + 1)) + this.minBubbleSize;
+
         return new Bubble(x, y, radius);
     }
 
@@ -70,11 +78,24 @@ class BubbleContainer {
         if(this.isEnd) return;
 
         for (let i = 0; i < this.max; i++) {
-            this.bubbles[i].move(this.context);
-            this.draw();
+            if(this.bubbles[i]) {
+                this.bubbles[i].move(this.context);
+                this.draw();
+
+            }
         }
 
-        this.animation = requestAnimationFrame(() => this.moveBubble());
+        if(this.checkBubblesOutOfScreen()) {
+            this.isEnd = true;
+            cancelAnimationFrame(this.animation);
+        } else {
+            this.animation = requestAnimationFrame(() => this.moveBubble());
+        }
+
+    }
+
+    checkBubblesOutOfScreen() {
+        return this.bubbles.every(bubble => bubble.y + bubble.radius < -1250);
     }
 
     show() {
@@ -84,7 +105,7 @@ class BubbleContainer {
     }
 
     clearCanvas() {
-        this.context.clearRect(0, 0, canvas.width, canvas.height);
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
     stopMoveBubbles() {
@@ -92,6 +113,7 @@ class BubbleContainer {
     }
 
     init() {
+        this.setBubbleArr();
         this.draw();
         this.moveBubble();
     }
