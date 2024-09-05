@@ -48,7 +48,7 @@ const gameConfig = {
 
     // начальные значения жизней
     defaultSharkHP: 1,
-    defaultDiverHP: 1,
+    defaultDiverHP: 3,
 
     maxAvalibleSharkHP: 3,
     // очки за врага (если отключено динамическое вычисление)
