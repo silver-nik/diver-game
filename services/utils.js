@@ -11,14 +11,4 @@ let getPlayerCenter = (player, canvas) => {
     };
 }
 
-let getRandomEnemyObj = (arr, imageObj, hp) => {
-    const randomIndex = Math.floor(Math.random() * arr.length);
-    const selectedEnemy = arr[randomIndex];
-
-    imageObj.src = selectedEnemy.img;
-    hp = selectedEnemy.hp;
-
-    return { imageObj, hp }
-}
-
-export { getPlayerCenter, getRandomInt, getRandomEnemyObj }
+export { getPlayerCenter, getRandomInt }

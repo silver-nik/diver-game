@@ -4,7 +4,7 @@ class Bubble {
         this.y = y;
         this.radius = radius;
         this.dx = Math.random() * 2 + 1;
-	    this.dy = Math.random() * 2 + 2;
+	    this.dy = Math.random() * 7 + 9;
 
         this.image = new Image();
         this.image.src = "./assets/pixell.png";
@@ -15,6 +15,7 @@ class Bubble {
         if (!this.image.complete) {
             return;
         }
+
 
         ctx.save();
         ctx.beginPath();
@@ -46,12 +47,15 @@ class BubbleContainer {
         this.canvas.height = this.gameHeight;
 
         this.bubbles = [];
-        this.max = 70;
+        this.max = 50;
+        this.image = new Image();
+        this.image.src = "./assets/pixell.png";
 
         this.maxBubbleSize = 70;
         this.minBubbleSize = 50;
 
         this.isEnd = false;
+        this.hasCalledSetFinishModal = false;
     }
 
     setBubbleArr() {
@@ -74,28 +78,63 @@ class BubbleContainer {
         return new Bubble(x, y, radius);
     }
 
+    waitBubblesEnd(setFinishModalMethod, ) {
+        return new Promise((resolve) => {
+
+            let hasCalledSetFinishModal = false;
+
+            const checkBubbles = () => {
+                const positionStatusEnd = this.checkBubblesPositionOnScreen('end');
+                const positionStatusMiddle = this.checkBubblesPositionOnScreen('mid');
+
+                if(positionStatusMiddle && !hasCalledSetFinishModal) {
+                    document.querySelector('.modal')?.remove();
+                    if (setFinishModalMethod) {
+                        setFinishModalMethod();
+                        hasCalledSetFinishModal = true; 
+                    }
+                }
+    
+                if (positionStatusEnd) {
+                    this.hasCalledSetFinishModal = false;
+                    cancelAnimationFrame(this.animation);
+                    this.clearCanvas();
+                    this.bubbles = [];
+                    this.setBubbleArr();
+                    this.isEnd = false;
+                    resolve(); 
+                } else {
+                    this.animation = requestAnimationFrame(checkBubbles);
+                }
+            };
+            checkBubbles();
+        });
+    }
+
     moveBubble() {
-        if(this.isEnd) return;
 
         for (let i = 0; i < this.max; i++) {
             if(this.bubbles[i]) {
-                this.bubbles[i].move(this.context);
+                this.bubbles[i].move();
                 this.draw();
-
             }
         }
 
-        if(this.checkBubblesOutOfScreen()) {
-            this.isEnd = true;
-            cancelAnimationFrame(this.animation);
-        } else {
-            this.animation = requestAnimationFrame(() => this.moveBubble());
-        }
+        this.animation = requestAnimationFrame(() => this.moveBubble());
 
     }
+    
+    checkBubblesPositionOnScreen(position) {
 
-    checkBubblesOutOfScreen() {
-        return this.bubbles.every(bubble => bubble.y + bubble.radius < -1250);
+        if (position === 'end') {
+            return this.bubbles.every(bubble => bubble.y + bubble.radius < -this.image.height);
+        }
+
+        if (position === 'mid') {
+            return this.bubbles.every(bubble => bubble.y + bubble.radius < this.canvas.height / 2);
+        }
+
+        return false;
     }
 
     show() {

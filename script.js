@@ -1,9 +1,6 @@
 import { gameConfig } from './services/config.js';
 import { getPlayerCenter, getRandomInt } from './services/utils.js';
 import BubbleContainer from './modules/canvas-bubble.js';
-import Diver from './modules/diver.js';
-import Shark from './modules/shark.js';
-import Fishes from './modules/fishes.js';
 
 class Fish {
     constructor(ctx, startX, startY, controlX, controlY, endX, endY, duration, image, isEnemy, game, hp) {
@@ -37,13 +34,17 @@ class Fish {
         this.startTime = null;
         this.image = image;
         this.start = Date.now();
-        this.diverModule = new Diver();
+
         this.midGameTime = (gameConfig.gameAvarageTime / 2) * 60;
         this.game = game;
 
         this.gamerHp = document.querySelector('.gamer-hp');
         this.text = document.querySelector('.text');
         this.points = 0;
+
+        this.defaultDiverHP = gameConfig.defaultDiverHP;
+        this.diverHP = this.defaultDiverHP;
+        this.gamerHp.textContent = this.diverHP;
 
         this.isEnemy = isEnemy;
         this.pointPerEnemy = gameConfig.pointsPerEnemy;
@@ -106,7 +107,9 @@ class Fish {
             this.startTime = null;
             this.endX = Math.random() < 0.5 ? -100 : canvas.width + 100;
             this.endY = getRandomInt(0, canvas.height + 100); 
-        }
+        } 
+
+        if(enemy) this.duration = getRandomInt(gameConfig.gameMinEnemySpeed, gameConfig.gameMaxEnemySpeed) * 1000;;
 
         this.startX = getRandomInt(0, canvas.width);
         this.startY = -200; 
@@ -144,15 +147,15 @@ class Fish {
 
     handleCollisionWithPlayer() {
         if(this.isEnemy && this.isAlive && this.hp > 0 && !this.isHit) {
-            this.diverModule.diverHP--;
-            this.gamerHp.textContent = this.diverModule.diverHP;  
+            this.diverHP--;
+            this.gamerHp.textContent = this.diverHP;  
             this.game.playerElement.style.opacity = 0.5;
             setTimeout(() => {
                 this.game.playerElement.style.opacity = 1;
             }, 1000)
             this.isHit = true;
 
-            if (this.diverModule.diverHP <= 0) {
+            if (this.diverHP <= 0) {
                 this.game.isGameOver = true;
                 this.game.setResultModal(false);
 
@@ -193,22 +196,34 @@ class Fish {
         this.ctx.beginPath();
         if(this.isEnemy) {
 
-            for (let i = 0; i < this.startHp; i++) {
-                const heartImage = i < this.hp ? this.redHeartImage : this.greyHeartImage;
+
+            if (this.hp > 0) {
                 this.ctx.globalAlpha = 1;
-                this.ctx.drawImage(heartImage, (this.x + this.image.width - (this.image.width / 4)) + i * (12 + 2), (this.y + this.image.height - (this.image.height / 1.5)  - 10), 12, 10);
+
+                for (let i = 0; i < this.startHp; i++) {
+                    const heartImage = i < this.hp ? this.redHeartImage : this.greyHeartImage;
+                    this.ctx.globalAlpha = 1;
+                    this.ctx.drawImage(heartImage, (this.x + this.image.width - (this.image.width / 4)) + i * (12 + 2), (this.y + this.image.height - (this.image.height / 1.5)  - 10), 12, 10);
+                }
+            } else if (this.hp == 0) {
+                this.ctx.globalAlpha = 0;
+                this.ctx.drawImage(this.image, this.x, this.y, this.image.width, this.image.height);
+                this.ctx.globalAlpha = 1;
+                this.ctx.closePath();
+                return;
             }
+    
 
 
         }
         
-        if(this.hp >= 0 && this.hp < this.startHp && this.isEnemy) {
+        if(this.hp > 0 && this.hp < this.startHp && this.isEnemy) {
             this.ctx.globalAlpha = 0.5;
-            this.ctx.drawImage(this.image, this.x, this.y, this.image.width, this.image.height);
-        } else {
-            this.ctx.drawImage(this.image, this.x, this.y, this.image.width, this.image.height);
+        } else if(this.hp == 0 && this.isEnemy) {
+            this.ctx.globalAlpha = 0;
         }
 
+        this.ctx.drawImage(this.image, this.x, this.y, this.image.width, this.image.height);
         this.ctx.closePath();
     }
 }
@@ -220,7 +235,6 @@ class Game {
         this.initGameSettings();
         this.initGameObj();
         this.setStartModal();
-
     }
 
     initCanvas() {
@@ -241,7 +255,7 @@ class Game {
         this.url = gameConfig.url;
         this.imagesNpc = gameConfig.npcImages;
         this.imagesEnemy = gameConfig.imagesEnemy;
-        this.max = 4;
+        this.max = gameConfig.npcWeight;
         this.duration = 5;
         this.opacity = 0;
         this.isGameOver = false;
@@ -250,7 +264,11 @@ class Game {
         this.points = 0;
         this.animationFrameId = null;
         this.isFinal = false;
+        this.isStarted = false;
+
+        this.isAnimationActiove = false;
     }
+    
 
     initGameObj() {
         this.bubble = new BubbleContainer("canvas");
@@ -294,7 +312,7 @@ class Game {
         const controlY = getRandomInt(0, this.canvas.height);
         const endX = isEnemy ? this.gameWidth / 2 : getRandomInt(this.canvas.width, this.canvas.width + 100);
         const endY = isEnemy ? this.gameHeight / 2 : getRandomInt(0, this.canvas.height + 100);
-        const duration = getRandomInt(7000, 10000);
+        const duration = getRandomInt(9000, 10000);
         let hp = gameConfig.defaultSharkHP;
 
         const image = new Image();
@@ -343,7 +361,7 @@ class Game {
         this.animationFrameId = requestAnimationFrame(this.animate);
     }
 
-    finalAnimation(win) {
+    async finalAnimation(win) {
 
         if(this.opacity < 1) {
             this.opacity += 0.01;
@@ -357,10 +375,11 @@ class Game {
         if(this.opacity < 1 || this.duration < 2) {
             requestAnimationFrame(() => this.finalAnimation());
         } else {
-            this.bubble.moveBubble();
-            setTimeout(() => {
+            this.bubble.moveBubble(); 
+            await this.bubble.waitBubblesEnd(() => {
                 this.setFinishModal();
-            }, 6000);
+            });
+
         }
         
     }
@@ -374,17 +393,18 @@ class Game {
         this.finalAnimation();
     }
 
-    createModal(modlaObj) {
-        const {title, content, buttonId, buttonText, buttonExit, bgImage, onButtonClick, callback} = modlaObj;
+    createModal(modalObj) {
+        const {className, title, content, buttonId, buttonText, buttonExit, bgImage, onButtonClick, callback} = modalObj;
 
         let modal = document.createElement("div");
         modal.classList.add("modal");
+        modal.classList.add(className);
         modal.innerHTML = `
             <img src="./assets/logo.svg" class="logo">
             <div class="modal-content ${bgImage ? 'finish-modal' : 'start-modal'}">
                 <p class="${bgImage ? 'finish-title' : 'title'}">${title}</p>
                 ${content}
-                <button id="${buttonId}" class="${bgImage ? 'red-btn' : 'blue-btn'}">${buttonText}</button>
+                <button id="${buttonId}" class="red-btn">${buttonText}</button>
                 ${buttonExit ? '<button id="exit" class="dark-btn">Выйти</button>' : ''}
             </div>
             ${bgImage ? `<img src="./assets/${bgImage}.png" class="bg-modal">` : ''}
@@ -398,8 +418,7 @@ class Game {
         }
     
         document.querySelector(`#${buttonId}`).addEventListener('click', () => {
-            if (onButtonClick) onButtonClick();
-            modal.remove();
+            if (onButtonClick) onButtonClick(modal);
         });
 
         try {
@@ -410,8 +429,13 @@ class Game {
         
     }
 
+    clearCanvas() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
     setFinishModal() {
         this.createModal({
+            className: "final",
             title: this.isFinal ? "Победа!" : `Вы заработали ${this.points} баллов`,
             content: this.isFinal 
                 ? `<p class="finish-text">Приходи на NetCase Day, чтобы побороться за приз и увидеть, как ловят сетевые угрозы PT Sandbox и PT NAD</p>` 
@@ -420,8 +444,18 @@ class Game {
             buttonId: "play-again",
             buttonExit: true,
             bgImage: this.isFinal ? "sccss" : "lse",
-            onButtonClick: () => {
-                this.resetGame();
+            onButtonClick: async (modal) => {
+                if (!this.isStarted) {
+
+                    this.isStarted = true;
+                    this.clearCanvas();
+                    this.bubble.moveBubble(); 
+                    this.fade.style.pointerEvents = "none"; 
+                    await this.bubble.waitBubblesEnd();
+                    this.init();
+                    this.resetGame();
+                    this.fade.style.pointerEvents = "auto"; 
+                }
             },
             callback: () => {
                 this.postResource(this.url, {
@@ -434,17 +468,26 @@ class Game {
 
     setStartModal() {
         this.createModal({
+            className: "start",
             title: "Тапай по экрану и уничтожай акул-хакеров",
             content: `<p class="preview">До победы <span class="preview-count">${gameConfig.gameScoreToWin} баллов</span></p>`,
             buttonText: "ПОПЛЫЛИ",
             buttonId: "play-start",
             buttonExit: false,
             bgImage: "", 
-            onButtonClick: () => {
-                this.fade.style.opacity = "0";
-                this.init();
+            onButtonClick: async (modal) => {
+                if (!this.isStarted) {
+                    this.isStarted = true;
+                    this.bubble.moveBubble(); 
+                    this.fade.style.pointerEvents = "none"; 
+                    await this.bubble.waitBubblesEnd();
+                    this.init();
+                    this.fade.style.pointerEvents = "auto"; 
+                }
             }
         });
+
+
     }
 
     async postResource(url, data) {
@@ -491,7 +534,7 @@ class Game {
     init() {
         document.querySelector('.game__status-bar').classList.add('active');
         document.querySelector('.diver').classList.add('active');
-
+        this.isStarted = false;
         this.animate();
     }
 }

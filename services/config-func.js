@@ -1,16 +1,12 @@
-let calcPointNum = (min, fishSpeed, fishArr, enemyWeight, value) => {
-    // время игры из минут в секунды
-    const sec = min * 60;
-    // количество рыб за указанное время
-    const enemySum = sec / fishSpeed;
-    // вероятность появления акулы (сумма акул в массиве : общее количество элементов в массиве)
-    const q = enemyWeight / fishArr.length;
-    // количество акул в enemySum
-    const s = enemySum * q; 
-    
-    const points = value / Math.round(s);
+let calcPointNum = (min, value, minSpeed, maxSpeed) => {
 
-    return points;
+    const sec = min * 60;
+    const dur = (minSpeed + maxSpeed) / 2; 
+    const perMinute = sec / dur;
+    const total = perMinute * min;
+    const poins = (value * 2) / total;
+
+    return poins;
 
 }
 

@@ -1,6 +1,24 @@
+@font-face { 
+    font-family: "Mont";
+    src: url("./assets/MontSemiBold.woff");
+    src: url("./assets/MontSemiBold.eot?#iefix")format("embedded-opentype"),
+    url("./assets/MontSemiBold.woff") format("woff"),
+    url("./assets/MontSemiBold.ttf") format("truetype");
+    font-weight: 700;
+}
+
+@font-face { 
+    font-family: "Mont";
+    src: url("./assets/MontHeavy.woff");
+    src: url("./assets/MontHeavy.woff") format("woff");
+    font-weight: 900;
+}
+
+* {
+    font-family: 'Mont', sans-serif;
+}
+
 body, .game {
-    background-color: darkblue;
-    /* height: 100vh; */
     overflow: hidden;
     font-family: 'Mont', sans-serif;
     box-sizing:border-box;
@@ -16,33 +34,45 @@ body, .game {
 }
 
 .game {
-    /* max-width: 400px;
-    border: 3px solid #fff; */
-    /* height: 400px; */
-    /* margin: 0 auto;
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-    background: url('./assets/bg-pattern.png') no-repeat;
-    background-size: 100% 100%; */
-
     max-width: 430px;
-    border: 3px solid #fff;
-    height: 99%;
+    height: 100%;
     margin: 0 auto;
     position: absolute;
     overflow: hidden;
     width: 100%;
-    /* height: 100%; */
-    background: url(./assets/bg-pattern.png) no-repeat;
+    
+    background: linear-gradient(180deg, #05122A 0%, #0B2658 100%);
     background-size: 100% 100%;
     top: 0;
     margin: 0 auto;
     left: 50%;
     transform: translateX(-50%);
-
 }
+
+.game::before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    background: url(./assets/Component\ 5.png) no-repeat;
+    background-size: 100% 100%;
+    animation: bubbleAnimation 8s infinite ease-in-out;
+}
+
+.game::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: url(./assets/grid.svg) no-repeat;
+    background-size: 100% 100%;
+    animation: moveBg 8s linear infinite;
+    z-index: -1;
+}
+
 
 .bg-first, .bg-second, .bg-third {
     position: absolute;
@@ -62,18 +92,7 @@ body, .game {
     bottom: -40px;
 }
 
-/* .text {
-    position: absolute;
-    left: 50%;
-    transform: translateY(-50%);
-    color: #fff;
-    text-transform: uppercase;
-} */
-
 .diver {
-    /* width: 50px;
-    height: 50px; */
-    /* background-image: url(./assets/diver.svg); */
     background-size: 50px 50px;
     position: absolute;
     z-index: 100;
@@ -87,7 +106,6 @@ body, .game {
 
     transition: all 1s ease-in-out; 
     opacity: 0;
-
 }
 
 .diver.active {
@@ -214,50 +232,8 @@ body, .game {
     background-color: darkblue;
 }
 
-.fish1 {
-    width: 40px;
-    height: 40px;
-    background-image: url(./assets/barrier-obstacle-svgrepo-com.svg);
-    background-size: 50px 50px;
-    position: absolute;
-    border: 1px solid silver;
-    /* left: 450px; */
-    top: 5%;
-}
-
 .gamer-hp, .hp {
     color: #fff;
-}
-
-.fish-top {
-    /* top: 100px; */
-
-    left: 5%;
-
-}
-
-.fish-middle {
-    /* bottom: 50%;
-    transform: translateY(50%); */
-
-    left: 45%;
-}
-
-.fish-bottom {
-    /* bottom: 100px; */
-
-    left: 20%;
-}
-
-.fish2 {
-    width: 80px;
-    height: 40px;
-    background-image: url(./assets/icons8-фонарь-80.png);
-    background-size: 50px 50px;
-    position: absolute;
-    border: 1px solid silver;
-    /* left: 450px; */
-    top: 5%;
 }
 
 .game__status-bar {
@@ -280,32 +256,6 @@ body, .game {
     opacity: 1;
 }
 
-.shark {
-    width: 80px;
-    height: 40px;
-    background-image: url(./assets/1937f5133b7f7027e7b70f24fa815962.jpg);
-    background-size: 50px 50px;
-    position: absolute;
-    border: 1px solid silver;
-    /* left: 450px; */
-    top: 5%;
-}
-
-.bigger {
-    width: 100px;
-    height: 80px;
-}
-
-/* .buffer {
-    width: 70px;
-    border: 1px solid silver;
-} */
-
-.fish {
-    left: 0;
-    top: 0;
-}
-
 /* bubbles */
 
 .fade {
@@ -317,12 +267,6 @@ body, .game {
     justify-content: space-between;
     z-index: 1000;
     opacity: 0;
-    /* pointer-events: none; */
-}
-
-canvas {
-    /* width: 100%;
-    height: 100%; */
 }
 
 #canvas1 {
@@ -342,6 +286,7 @@ canvas {
     border: none;
     border-radius: 4px;
     text-transform: uppercase;
+    animation: pulse 1.5s infinite;
 }
 
 .dark-btn {
@@ -366,12 +311,7 @@ canvas {
     transform: translate(50%, -50%);
     width: 100%;
     height: 100%;
-    /* display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center; */
 
-    /* height: 100%; */
     background: url(./assets/bg-pattern.png) no-repeat;
     background-size: 100% 100%;
     top: 0;
@@ -380,7 +320,33 @@ canvas {
     transform: translateX(-50%);
 }
 
-/* start modal (game styles) */
+.modal.start {
+    background: linear-gradient(180deg, #05122A 0%, #0B2658 100%);
+}
+
+.modal.start::before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    background: url(./assets/Component\ 5.png) no-repeat;
+    background-size: 100% 100%;
+    animation: bubbleAnimation 8s infinite ease-in-out;
+}
+
+.modal.start::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: url(./assets/grid.svg) no-repeat;
+    background-size: 100% 100%;
+    animation: moveBg 8s linear infinite;
+    z-index: -1;
+}
 
 .logo {
     position: absolute;
@@ -401,6 +367,7 @@ canvas {
 #canvas {
     position: relative;
     pointer-events: none;
+    z-index: 1000;
 }
 
 .title {
@@ -485,11 +452,47 @@ canvas {
     text-align: center;
     color: #fff;
     margin: 0;
-    max-width: 320px;
+    max-width: 300px;
     width: 100%;
 }
 
 #play-again {
     margin-top: 34px;
     margin-bottom: 20px;
+}
+
+@keyframes bubbleAnimation {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-30px);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes moveBg {
+    0% {
+        transform: translate(0, 0);
+    }
+    25% {
+        transform: translate(20px, -30px);
+    }
+    50% {
+        transform: translate(0, -10px);
+    }
+    75% {
+        transform: translate(-20px, -30px);
+    }
+    100% {
+        transform: translate(0, 0);
+    }
 }
