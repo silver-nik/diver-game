@@ -2,8 +2,8 @@ import { calcPointNum, setFishesArrayToMidByWeight } from './config-func.js';
 
 const gameConfig = {
     gameAvarageTime: 2,
-    gameMaxEnemySpeed: 5,
-    gameMinEnemySpeed: 2,
+    gameMaxEnemySpeed: 6,
+    gameMinEnemySpeed: 4,
     gameScoreToWin: 2409,
 
     url: 'https://jsonplaceholder.typicode.com/posts/', // endpoint https://ptgame.idurn.ru/save_game_result

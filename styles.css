@@ -320,11 +320,11 @@ body, .game {
     transform: translateX(-50%);
 }
 
-.modal.start {
+.modal {
     background: linear-gradient(180deg, #05122A 0%, #0B2658 100%);
 }
 
-.modal.start::before {
+.modal::before {
     content: '';
     width: 100%;
     height: 100%;
@@ -335,7 +335,7 @@ body, .game {
     animation: bubbleAnimation 8s infinite ease-in-out;
 }
 
-.modal.start::after {
+.modal::after {
     content: '';
     position: absolute;
     width: 100%;
@@ -345,7 +345,7 @@ body, .game {
     background: url(./assets/grid.svg) no-repeat;
     background-size: 100% 100%;
     animation: moveBg 8s linear infinite;
-    z-index: -1;
+    z-index: -2;
 }
 
 .logo {
