@@ -11,9 +11,18 @@ class Fish {
     }
 
     setEventListener() {
-        if(this.isEnemy) {
-            // document.addEventListener("click", (e) => this.handleClick(e));
-            document.addEventListener("touchstart", (e) => this.handleClick(e));
+        if (this.isEnemy) {
+            let isTouched = false;
+    
+            document.addEventListener("touchstart", (e) => {
+                isTouched = true;
+                this.handleClick(e);
+            });
+    
+            document.addEventListener("click", (e) => {
+                if (!isTouched) this.handleClick(e);
+                isTouched = false;
+            });
         }
     }
 
