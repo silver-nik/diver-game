@@ -13,6 +13,7 @@ class Fish {
     setEventListener() {
         if(this.isEnemy) {
             document.addEventListener("click", (e) => this.handleClick(e));
+            document.addEventListener("touchstart", (e) => this.handleClick(e));
         }
     }
 
@@ -76,6 +77,8 @@ class Fish {
     }
     
     handleClick(e) {
+        e.preventDefault();
+        
         const actionImage = document.querySelector(".toggle");
         actionImage.classList.remove("hidden");
         setTimeout(() => {
