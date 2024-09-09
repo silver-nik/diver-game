@@ -12,7 +12,7 @@ class Fish {
 
     setEventListener() {
         if(this.isEnemy) {
-            document.addEventListener("click", (e) => this.handleClick(e));
+            // document.addEventListener("click", (e) => this.handleClick(e));
             document.addEventListener("touchstart", (e) => this.handleClick(e));
         }
     }
