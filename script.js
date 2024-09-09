@@ -78,16 +78,16 @@ class Fish {
     
     handleClick(e) {
         e.preventDefault();
-        
+
         const actionImage = document.querySelector(".toggle");
         actionImage.classList.remove("hidden");
         setTimeout(() => {
             actionImage.classList.add("hidden");
         }, 1000)
-        navigator.vibrate(200);
 
         if (e.target.closest('.modal') || e.target === document.querySelector('.modal')) return;
 
+        console.log("ewe");
         this.decreaseHealth();
     }
 
