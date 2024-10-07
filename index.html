@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,6 +11,10 @@
    <div class="container">
 
         <div class="game">
+
+            <div class="lines">
+
+            </div>
 
             <img src="./assets/logo.svg" class="logo">
 
@@ -34,6 +38,10 @@
             <div class="diver">
                 <img src="./assets/diver.png" class="normal" alt="">
                 <img src="./assets/diver-action.png" class="toggle hidden" alt="">
+            </div>
+
+            <div class="game__active-btn">
+                <button class="active-btn">Атака</button>
             </div>
 
             <div class="fade">
@@ -71,8 +79,439 @@
 
     const uid = localStorage.uid
 </script>
-<script type="module" src="./script.js"></script>
+<script  type="module" src="./script.js"></script>
 <script type="module" src="./services/config.js"></script>
 <script type="module" src="./services/config-func.js"></script>
 
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Game</title>
+    <style>
+        canvas {
+            /* background-color: #eee; */
+            display: block;
+            margin: 0 auto;
+            z-index: 1000;
+            position: relative;
+        }
+    </style>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+    <div class="container">
+        <div class="game">
+            <img src="./assets/logo.svg" class="logo">
+            <div class="game__status-bar">
+                <div class="points">
+                    <span class="text">0</span>
+                    <div class="icon-shark">
+                        <img src="./assets/shark-icon.png" alt="" class="w-icon h-icon icon">
+                    </div>
+                </div>
+                <div class="health">
+                    <span class="gamer-hp"></span>
+                    <div class="icon-heart">
+                        <img src="./assets/heart.svg" alt="" class="icon">
+                    </div>
+                </div>
+            </div>
+            <canvas id="gameCanvas" width="400" height="600"></canvas>
+            <!-- <button id="attackButton">Атаковать</button> -->
+
+
+            <div class="game__active-btn">
+                <button id="attackButton" class="active-btn">Атака</button>
+            </div>
+
+            <div class="fade">
+                <canvas width="1000" height="1000" id="canvas"></canvas>
+            </div>
+
+            <div class="bg">
+                <img src="./assets/bg.png" alt="" class="bg-first">
+                <img src="./assets/bg-2.png" alt="" class="bg-second">
+                <img src="./assets/bg-3.png" alt="" class="bg-third">
+            </div>
+
+        </div>
+    </div>
+
+    <script src="./script2.0.js" type="module"></script>
+
+<!-- <script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+const PLAYER_WIDTH = 140;
+const PLAYER_HEIGHT = 140;
+const LINES_X = [80, 200, 300]; // три линии
+let playerX = LINES_X[1]; // игрок начинает в центре
+let playerY = canvas.height - PLAYER_HEIGHT; // игрок на нижней позиции
+let playerLives = 3;
+
+let elements = []; // массив для элементов (NPC, враги, специальные элементы)
+let timeUntilNextElement = 100; // время до появления следующего элемента (счётчик)
+let isPlayerTransparent = false; // Флаг для отслеживания прозрачности игрока
+
+
+let npcImages = ['./assets/npc.png', './assets/npc-2.png', './assets/npc-3.png', './assets/npc-6.png', './assets/npc-7.png', './assets/npc-8.png', './assets/npc-9.png'];
+let enemies = [
+    {
+        img: './assets/shark.png',
+        hp: 1,
+    },
+    {
+        img: './assets/shark-mid.png',
+        hp: 2,
+    },
+    {
+        img: './assets/shark-big.png',
+        hp: 3,
+    }
+];
+
+let lastSharkHitTime = 0; // Время последнего столкновения с акулой
+const hitCooldown = 1000; // Время в миллисекундах, в течение которого игнорируем столкновения
+
+function getScaledDimensions(originalWidth, originalHeight, targetWidth) {
+    const aspectRatio = originalWidth / originalHeight;
+    const newWidth = targetWidth;
+    const newHeight = newWidth / aspectRatio;
+    return { newWidth, newHeight };
+}
+
+// Создаем объект игрока
+const player = {
+    x: playerX,
+    y: playerY,
+    width: PLAYER_WIDTH,
+    height: PLAYER_HEIGHT,
+    draw() {
+        
+        const playerImage = new Image();
+        playerImage.src = this.isAttacking ? './assets/diver-action.png' : './assets/diver.png';
+
+        const imgWidth = playerImage.naturalWidth;  // Исходная ширина изображения
+        const imgHeight = playerImage.naturalHeight; // Исходная высота изображения
+
+        const aspectRatio = imgWidth / imgHeight;
+        const newWidth = PLAYER_WIDTH;
+        const newHeight = newWidth / aspectRatio;
+
+        // Отрисовка изображения
+        ctx.drawImage(playerImage, this.x - newWidth / 2, this.y, newWidth, newHeight);
+
+        // ctx.drawImage(playerImage, this.x - this.width / 2, this.y, this.width, this.height);
+        // ctx.fillStyle = 'blue';
+        // this.ctx.drawImage(this.image, this.x, this.y, this.image.width, this.image.height);
+
+        // ctx.fillRect(this.x - this.width / 2, this.y, this.width, this.height);
+    }
+};
+
+// Функция для создания случайного элемента
+function createRandomElement() {
+    // const type = Math.floor(Math.random() * 3); // 0 - NPC, 1 - Враг, 2 - Специальный элемент
+
+    const randomValue = Math.random();
+    let type;
+
+    if (randomValue < 0.1) {
+        type = 2; // Специальный элемент
+    } else if (randomValue < 0.6) {
+        type = 0; // NPC
+    } else {
+        type = 1; // Враг
+    }
+
+    const line = Math.floor(Math.random() * LINES_X.length);
+    const x = LINES_X[line];
+    const y = -40;
+
+    
+    let element = {
+        x: x,
+        y: y,
+        width: PLAYER_WIDTH / 2,
+        height: PLAYER_HEIGHT / 2,
+        speed: 2 + Math.random() * 2,
+        type: type, // 0 - NPC, 1 - Враг, 2 - Специальный элемент
+        img: null,
+
+        draw() {
+             if (this.img) {
+                const { newWidth, newHeight } = getScaledDimensions(this.img.naturalWidth, this.img.naturalHeight, this.width);
+                ctx.drawImage(this.img, this.x - newWidth / 2, this.y, newWidth, newHeight);
+                // ctx.drawImage(this.img, this.x - this.width / 2, this.y, this.img.naturalWidth, this.img.naturalWidth);
+            }
+            //  else {
+            //     ctx.fillStyle = 'yellow'; // Специальный элемент (если нужно)
+            //     ctx.fillRect(this.x - this.width / 2, this.y, this.width, this.height);
+            // }
+            // switch (this.type) {
+            //     case 0:
+            //         ctx.fillStyle = 'green'; // NPC
+            //         break;
+            //     case 1:
+            //         // ctx.fillStyle = 'red'; // Враг
+            //         const image = new Image();
+            //         const randomIndex = Math.floor(Math.random() * enemies.length);
+            //         const selectedEnemy = enemies[randomIndex];
+            //         ctx.drawImage(image, this.x, this.y, image.width, image.height);
+            //         break;
+            //     case 2:
+            //         ctx.fillStyle = 'yellow'; // Специальный элемент
+            //         break;
+            // }
+            // ctx.fillRect(this.x - this.width / 2, this.y, this.width, this.height);
+        },
+        update() {
+            this.y += this.speed;
+        }
+    };
+
+    // Назначаем изображение в зависимости от типа
+    if (type === 0) { // NPC
+        const randomIndex = Math.floor(Math.random() * npcImages.length);
+        element.img = new Image();
+        element.img.src = npcImages[randomIndex];
+    } else if (type === 1) { // Враг
+        const randomIndex = Math.floor(Math.random() * enemies.length);
+        element.img = new Image();
+        element.img.src = enemies[randomIndex].img;
+    } else if (type === 2) { // Специальный элемент
+        element.img = new Image();
+        element.img.src = './assets/question.png';
+    }
+
+    elements.push(element);
+}
+
+// Функция для обработки столкновений
+function checkCollision(player, element) {
+
+    // Определяем текущую линию игрока
+    const playerLineIndex = LINES_X.indexOf(player.x);
+    const elementLineIndex = LINES_X.indexOf(element.x);
+
+    // Проверяем, находятся ли игрок и элемент на одной линии
+    if (playerLineIndex !== elementLineIndex) {
+        return false; // Если не на одной линии, то нет столкновения
+    }
+
+    // Проверяем столкновения по X и Y
+    return (
+        player.x < element.x + element.width / 2 &&
+        player.x + player.width > element.x - element.width / 2 &&
+        player.y < element.y + element.height &&
+        player.y + player.height > element.y
+    );
+
+}
+
+async function finalAnimation(win) {
+
+    if(this.opacity < 1) {
+        this.opacity += 0.01;
+        this.fade.style.opacity = this.opacity;
+    }
+
+    if(this.duration > 1) {
+        this.duration -= 0.01;
+    }
+
+    if(this.opacity < 1 || this.duration < 2) {
+        requestAnimationFrame(() => this.finalAnimation());
+    } else {
+        this.bubble.moveBubble(); 
+        await this.bubble.waitBubblesEnd(() => {
+            this.setFinishModal();
+        });
+
+    }
+
+}
+
+function setResultModal(win) {
+    win ? console.log('Равно или выше 2049') : console.log('Сумма меньше 2409. Попробуйте снова');
+    if(win) {
+        this.isFinal = true;
+    }
+
+    this.finalAnimation();
+}
+
+// Основная логика игры
+function updateGame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Устанавливаем прозрачность игрока, если это необходимо
+    if (isPlayerTransparent) {
+        ctx.globalAlpha = 0.5; // Прозрачность 50%
+    } else {
+        ctx.globalAlpha = 1; // Полная непрозрачность
+    }
+
+    // Обновляем и рисуем игрока
+    player.draw();
+
+    // Сброс глобальной прозрачности
+    ctx.globalAlpha = 1;
+
+    // Обновляем и рисуем элементы
+    elements.forEach((element, index) => {
+        element.update();
+        element.draw();
+
+        // Проверяем столкновения
+        if (checkCollision(player, element)) {
+            const currentTime = Date.now();
+            if (element.type === 1) { // Враг
+                // playerLives--;
+                // elements.splice(index, 1); // Удаляем элемент после столкновения
+                if (playerLives <= 0) {
+                    // alert('Game Over');
+                    // resetGame();
+                    // setResultModal();
+                }
+
+                if (currentTime - lastSharkHitTime >= hitCooldown) {
+                    playerLives--;
+
+                    // Устанавливаем прозрачность игрока
+                    isPlayerTransparent = true;
+                    setTimeout(() => {
+                        isPlayerTransparent = false; // Возвращаем игрока к непрозрачному состоянию
+                    }, 1000); // 1000 мс = 1 секунда
+
+
+                    lastSharkHitTime = currentTime; // Обновляем время последнего столкновения
+                }
+
+            } 
+            else if (element.type === 2) { // Специальный элемент
+                // alert('Вопрос: Что такое HTML?');
+                elements.splice(index, 1);
+            }
+        }
+
+        // Удаляем элементы, которые вышли за пределы экрана
+        if (element.y > canvas.height) {
+            elements.splice(index, 1);
+            if (element.type === 1) { // Если это акула, сбрасываем время столкновения
+                lastSharkHitTime = 0; // Сброс времени столкновения при удалении акулы
+            }
+        }
+    });
+
+
+     // Отсчет времени до появления нового элемента
+     if (timeUntilNextElement <= 0) {
+        createRandomElement();
+        timeUntilNextElement = 100; // устанавливаем новый интервал для появления элемента
+    } else {
+        timeUntilNextElement--; // уменьшаем счётчик до появления следующего элемента
+    }
+
+     // Добавляем новые элементы
+    //  if (Math.random() < 0.02) {
+    //     createRandomElement();
+    // }
+
+    // Отображаем количество жизней игрока
+
+    document.querySelector(".gamer-hp").textContent = playerLives;    
+
+    // ctx.fillStyle = 'black';
+    // ctx.font = '20px Arial';
+    // ctx.fillText(`Жизни: ${playerLives}`, 10, 20);
+
+    requestAnimationFrame(updateGame);
+}
+
+// Устанавливаем ширину и высоту canvas, основываясь на его стиле
+function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    player.y = canvas.height - PLAYER_HEIGHT - 120;
+}
+
+// Сбрасываем игру
+function resetGame() {
+    playerLives = 3;
+    elements = [];
+    player.x = LINES_X[1]; // Возвращаем игрока в центр
+}
+
+// Управление игроком
+document.addEventListener('keydown', (event) => {
+    if (event.code === 'ArrowLeft' && player.x > LINES_X[0]) {
+        player.x = LINES_X[LINES_X.indexOf(player.x) - 1];
+    } else if (event.code === 'ArrowRight' && player.x < LINES_X[LINES_X.length - 1]) {
+        player.x = LINES_X[LINES_X.indexOf(player.x) + 1];
+    }
+});
+
+// Функция для обработки нажатий (тапов) на экран
+canvas.addEventListener('touchstart', (event) => {
+    const touchX = event.touches[0].clientX;
+
+    // Если тап на левой половине экрана — перемещаем влево
+    if (touchX < canvas.width / 2 && player.x > LINES_X[0]) {
+        player.x = LINES_X[LINES_X.indexOf(player.x) - 1];
+    } 
+    // Если тап на правой половине экрана — перемещаем вправо
+    else if (touchX >= canvas.width / 2 && player.x < LINES_X[LINES_X.length - 1]) {
+        player.x = LINES_X[LINES_X.indexOf(player.x) + 1];
+    }
+});
+
+// Функция атаки
+function attack() {
+    let closestElement = null;
+    let minDistance = Infinity; 
+
+    elements.forEach((element, index) => {
+        if (element.x === player.x) { // Только врагов можно атаковать
+            const distance = Math.abs(element.y - player.y);
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestElement = index;
+            }
+        }
+    });
+
+    // Удаляем ближайший элемент, если он найден
+    if (closestElement !== null) {
+        elements.splice(closestElement, 1);
+    }
+
+    // Устанавливаем состояние атаки
+    player.isAttacking = true;
+
+    // Возвращаем состояние после 1 секунды
+    setTimeout(() => {
+        player.isAttacking = false;
+    }, 1000);
+}
+
+// Привязываем атаку к кнопке
+attackButton.addEventListener('click', attack);
+
+// Вызываем resizeCanvas при загрузке страницы
+window.onload = resizeCanvas;
+// Вызываем resizeCanvas при изменении размера окна
+window.onresize = resizeCanvas;
+// Запускаем игру
+updateGame();
+</script> -->
+</body>
 </html>

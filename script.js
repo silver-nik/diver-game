@@ -2,15 +2,31 @@ import { gameConfig } from './services/config.js';
 import { getPlayerCenter, getRandomInt } from './services/utils.js';
 import BubbleContainer from './modules/canvas-bubble.js';
 
+let occupiedLines = [];
+
+let lineYPositions = [
+    0,  // Верхняя линия
+    160, // Средняя линия
+    310  // Нижняя линия
+];
+
+let askedQuestions = [];
+
 class Fish {
     constructor(ctx, startX, startY, controlX, controlY, endX, endY, duration, image, isEnemy, game, hp) {
 
         this.initVars(ctx, startX, startY, controlX, controlY, endX, endY, duration, image, isEnemy, game, hp);
         this.initDOMElements();
         this.setEventListener();
+
+        //  if(!isEnemy) {
+            this.availableSpecial = true;
+            this.availableEnemy = true;
+        // }
+
     }
 
-    setEventListener() {
+    setEventListener(spec) {
         if (this.isEnemy) {
             let isTouched = false;
     
@@ -24,6 +40,7 @@ class Fish {
                 isTouched = false;
             });
         }
+
     }
 
     initDOMElements() {
@@ -68,6 +85,14 @@ class Fish {
         this.isScored = false;
         this.isHit = false;
         this.isLoaded = false;
+
+        this.isSpecialElement = false;
+        this.isEnemy = false;
+        this.isCurentQuestion = 0;
+        this.isQuestion = false;
+        this.specialCreated = false;
+        this.enemyCreated = false;   
+
     }
 
     changeImage() {
@@ -79,15 +104,16 @@ class Fish {
             this.image.src = selectedEnemy.img;
             this.hp = selectedEnemy.hp;
             this.startHp = selectedEnemy.hp;
+        } else if(this.isSpecialElement) {
+            this.image.src = './assets/icons8-фонарь-80.png';
         } else {
             this.image.src = this.game.imagesNpc[Math.floor(Math.random() * this.game.imagesNpc.length)];
         }
+       
 
     }
     
     handleClick(e) {
-        e.preventDefault();
-
         const actionImage = document.querySelector(".toggle");
         actionImage.classList.remove("hidden");
         setTimeout(() => {
@@ -96,7 +122,10 @@ class Fish {
 
         if (e.target.closest('.modal') || e.target === document.querySelector('.modal')) return;
 
-        console.log("ewe");
+        const playerLine = this.getPlayerLine();
+
+        console.log(playerLine);
+
         this.decreaseHealth();
     }
 
@@ -114,19 +143,73 @@ class Fish {
         }
     }
 
+    getPlayerLine() {
+        const playerY = this.diver.getBoundingClientRect().left;
+        let playerLine = null;
+        
+        if (playerY <= lineYPositions[0]) {
+            playerLine = lineYPositions[0];
+        } else if (playerY <= lineYPositions[1]) {
+            playerLine = lineYPositions[1];
+        } else {
+            playerLine = lineYPositions[2];
+        }
+        
+        return playerLine;
+    }
+
+    
     initRandomAttr(enemy) {
-        if(!enemy) {
+
+        if (occupiedLines.length >= lineYPositions.length) {
+            occupiedLines = [];
+        }
+    
+        // if (!enemy) {
             this.startTime = null;
-            this.endX = Math.random() < 0.5 ? -100 : canvas.width + 100;
-            this.endY = getRandomInt(0, canvas.height + 100); 
+        // }
+
+
+                if (this.availableSpecial && !this.isSpecialElement && !this.isEnemy) {
+                    this.isSpecialElement = Math.random() < 0.1;
+                }
+                
+                if (this.availableEnemy && !this.isSpecialElement) {
+                    this.isEnemy = Math.random() < 0.2;
+                }
+
+    
+        this.startY = -300; 
+        this.duration = getRandomInt(gameConfig.gameMinEnemySpeed, gameConfig.gameMaxEnemySpeed) * 1000;
+    
+        if (this.startY > this.game.canvas.height + 100) {
+            const index = occupiedLines.indexOf(lineYPositions.indexOf(this.startX));
+            // if (index > -1) {
+            //     occupiedLines.splice(index, 1);
+            // }
+        }
+
+        if (occupiedLines.length >= lineYPositions.length) {
+            occupiedLines = [];
+        }
+    
+        let availableLines = lineYPositions.filter((line, index) => !occupiedLines.includes(index));
+        
+        if (availableLines.length > 0) {
+            let lineIndex = Math.floor(Math.random() * availableLines.length);
+            this.startX = availableLines[lineIndex];
+
+            // if(this.isEnemy) {
+            //     console.log(this.startX);
+            //     console.log(availableLines);
+            // }
+    
+            occupiedLines.push(lineYPositions.indexOf(this.startX));
         } 
 
-        if(enemy) this.duration = getRandomInt(gameConfig.gameMinEnemySpeed, gameConfig.gameMaxEnemySpeed) * 1000;;
-
-        this.startX = getRandomInt(0, canvas.width);
-        this.startY = -200; 
-        this.controlX = getRandomInt(0, canvas.width / 2);
-        this.controlY = getRandomInt(0, canvas.height);
+        
+        
+    
     }
 
     move() {
@@ -135,30 +218,45 @@ class Fish {
         const currentTime = performance.now();
         const elapsed = currentTime - this.startTime;
         const t = Math.min(elapsed / this.duration, 1); 
-        this.x = (1 - t) ** 2 * this.startX + 2 * (1 - t) * t * this.controlX + t ** 2 * this.endX;
-        this.y = (1 - t) ** 2 * this.startY + 2 * (1 - t) * t * this.controlY + t ** 2 * this.endY;
+        this.x = this.startX;
+        this.y = (1 - t) ** 2 * this.startY + 2 * (1 - t) * t * this.controlY + t ** 2 * this.endY; 
 
-            if(t == 0) {
+            if(t == 0) { // начало анимации
                 this.isAlive = true;
                 this.isHit = false; 
+                // this.isSpecialElement = false;
             
                 if(this.isEnemy) {
                     this.isScored = false;
                     this.game.isScored = false; 
-
-                    this.initRandomAttr(true);
                 }
             }
 
-            if (t >= 1) {
-                this.initRandomAttr();
-                this.changeImage();
+            if (t >= 1) { // завершение анимации 
+                const lineIndex = lineYPositions.indexOf(this.startX);
+                const occupiedIndex = occupiedLines.indexOf(lineIndex);
+                
+                if (occupiedIndex > -1) {
+                    occupiedLines.splice(occupiedIndex, 1);
+                }
+
+                // if() {
+                // setTimeout(() => {
+                    this.initRandomAttr();
+                    this.changeImage();
+                    // console.log(this.isEnemy);
+
+                // }, 100)
+
+                // }
             }
 
     }
 
     handleCollisionWithPlayer() {
         if(this.isEnemy && this.isAlive && this.hp > 0 && !this.isHit) {
+            console.log("hit");
+            console.log(this.isEnemy, this.isAlive, this.hp, this.isHit);
             this.diverHP--;
             this.gamerHp.textContent = this.diverHP;  
             this.game.playerElement.style.opacity = 0.5;
@@ -181,10 +279,26 @@ class Fish {
             }
 
         }
+
+
+        if(this.availableSpecial && this.isSpecialElement && !this.isQuestion) {
+            this.isQuestion = true;
+            this.game.isStoppedGame = true;
+
+            const question = this.game.getRandomQuestion();
+            console.log(question);
+            this.game.setQuestionModal(question);
+
+            // setTimeout(() => {
+            //     this.isQuestion = false;
+            //     this.game.isStoppedGame = false;
+            //     this.game.animate();
+            // }, 3000);
+        }
     }
 
     checkCollisionWithPlayer(animationFrameId) {
-        if (!this.isAlive || this.game.isGameOver) return; 
+        if (!this.isAlive || this.game.isGameOver || this.game.isStoppedGame) return; 
 
         const playerRect = this.diver.getBoundingClientRect();
         const playerCenter = getPlayerCenter(this.diver, this.game.canvas);
@@ -194,9 +308,9 @@ class Fish {
 
         if (
             this.x < playerCenter.x + playerHalfWidth &&
-            this.x + 40 > playerCenter.x - playerHalfWidth &&
+            this.x + 20 > playerCenter.x - playerHalfWidth &&
             this.y < playerCenter.y + playerHalfHeight &&
-            this.y + 40 > playerCenter.y - playerHalfHeight
+            this.y + 20 > playerCenter.y - playerHalfHeight
         ) {
             this.handleCollisionWithPlayer();
         }
@@ -243,10 +357,14 @@ class Fish {
 class Game {
     constructor() {
 
+
         this.initCanvas();
         this.initGameSettings();
         this.initGameObj();
-        this.setStartModal();
+        // this.setStartModal();
+        this.initDiverControl();
+        this.init();
+
     }
 
     initCanvas() {
@@ -261,6 +379,10 @@ class Game {
         
         this.canvas.width = this.gameWidth;
         this.canvas.height = this.gameHeight;
+
+        lineYPositions = this.calculateLinePositions();
+        this.diverPositionIndex = 1;
+        this.updateDiverPosition();
     }
 
     initGameSettings() {
@@ -279,17 +401,50 @@ class Game {
         this.isStarted = false;
 
         this.isAnimationActiove = false;
+
+        this.enemySpawnInterval = 2000;
+        this.lastEnemySpawnTime = performance.now();
+
+        this.isStoppedGame = false;
+        this.correctAnswersCount = 0;
     }
-    
 
     initGameObj() {
         this.bubble = new BubbleContainer("canvas");
         this.fish = new Fish();
         this.npcFishes = [];
         this.createFishes();
-        this.createEnemy();
+        // this.createEnemy();
         this.bubble.clearCanvas();
         this.bubble.setBubbleArr();
+
+    }
+
+    getRandomQuestion() {
+        
+        const availableQuestions = gameConfig.questions1.filter(q => !askedQuestions.includes(q));
+        
+        if (availableQuestions.length === 0) {
+            console.log("Все вопросы заданы!");
+            return null;
+        }
+    
+        const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+        const question = availableQuestions[randomIndex];
+    
+        askedQuestions.push(question);
+        
+        return question;
+    }
+    
+    calculateLinePositions() {
+        const canvasWidth = this.canvas.width;
+
+        return [
+            0, 
+            canvasWidth * 2 / 6, 
+            canvasWidth * 4.5 / 6 
+        ];
     }
 
     endGame(win) {
@@ -317,35 +472,87 @@ class Game {
         }
     }
 
+    initDiverControl() {
+        this.diverPositionIndex = 1; 
+        this.linePositions = [...lineYPositions];
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowLeft') {
+                this.moveDiverLeft();
+            } else if (event.key === 'ArrowRight') {
+                this.moveDiverRight();
+            }
+        });
+    }
+
+    moveDiverLeft() {
+        if (this.diverPositionIndex > 0) {
+            this.diverPositionIndex--;
+            this.updateDiverPosition();
+        }
+    }
+
+    moveDiverRight() {
+        if (this.diverPositionIndex < this.linePositions.length - 1) {
+            this.diverPositionIndex++;
+            this.updateDiverPosition();
+        }
+    }
+
+    updateDiverPosition() {
+        const newPosition = lineYPositions[this.diverPositionIndex];
+        this.playerElement.style.left = `${newPosition}px`;
+    }
+
     createFish(isEnemy) {
-        const startX = getRandomInt(0, this.canvas.width); 
-        const startY = getRandomInt(-100, -50); 
-        const controlX = getRandomInt(0, this.canvas.width / 2);
-        const controlY = getRandomInt(0, this.canvas.height);
-        const endX = isEnemy ? this.gameWidth / 2 : getRandomInt(this.canvas.width, this.canvas.width + 100);
-        const endY = isEnemy ? this.gameHeight / 2 : getRandomInt(0, this.canvas.height + 100);
-        const duration = getRandomInt(9000, 10000);
+    
+        if (occupiedLines.length >= lineYPositions.length) {
+            console.log(this.linePositions);
+            occupiedLines = [];
+        }
+        
+    
+        let availableLines = lineYPositions.filter((line, index) => !occupiedLines.includes(index));
+
+
+        if (availableLines.length > 0) {
+            let lineIndex = Math.floor(Math.random() * availableLines.length);
+            this.startX = availableLines[lineIndex];
+        
+            occupiedLines.push(lineYPositions.indexOf(this.startX));
+        }
+
+        const startY = getRandomInt(-100, -50); // Начало за пределами canvas сверху
+        const endY = getRandomInt(this.canvas.height + 50, this.canvas.height + 100); 
+        
+        const controlX = this.startX; 
+        const controlY = startY; 
+    
+        // const duration = getRandomInt(9000, 10000);
+        const duration = 4000;
+
         let hp = gameConfig.defaultSharkHP;
-
+        const isSpecialElement = Math.random() < 0.2; // 20% шанс создать специальный элемент
+    
         const image = new Image();
-
+    
         if (isEnemy) {
             const randomIndex = Math.floor(Math.random() * gameConfig.enemies.length);
             const selectedEnemy = gameConfig.enemies[randomIndex];
-
+    
             image.src = selectedEnemy.img;
             hp = selectedEnemy.hp;
         } else {
             image.src = this.imagesNpc[Math.floor(Math.random() * this.imagesNpc.length)];
         }
- 
-        return new Fish(this.ctx, startX, startY, controlX, controlY, endX, endY, duration, image, isEnemy, this, hp);
+    
+        return new Fish(this.ctx, this.startX, startY, controlX, controlY, this.startX, endY, duration, image, isEnemy, this, hp);
     }
 
-    createEnemy() {
-        const enemyFish = this.createFish(true);
-        this.npcFishes.push(enemyFish);
-    }
+    // createEnemy() {
+    //     const enemyFish = this.createFish(true);
+    //     this.npcFishes.push(enemyFish);
+    // }
 
     createFishes() {
         for (let i = 0; i < this.max; i++) {
@@ -354,17 +561,27 @@ class Game {
         }
     }
 
+    handleAnswer = (answerIndex) => { 
+        const lastQuestion = askedQuestions[askedQuestions.length - 1];
+
+        const selectedAnswer = lastQuestion.answers[answerIndex];
+        
+        if(selectedAnswer.correct) {
+            this.correctAnswersCount++;
+            console.log(`Это правильный ответ, это ${this.correctAnswersCount} правильный ответ`);
+        } else {
+            const correctAnswer = lastQuestion.answers.find(answer => answer.correct);
+            console.log(`Это неправильный ответ. Правильный ответ: ${correctAnswer.text}`);
+        }
+    }
+
     animate = () => {
-        if (this.isGameOver) return;
+        if (this.isGameOver || this.isStoppedGame) return;
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); 
         const playerCenter = getPlayerCenter(this.playerElement, this.canvas);
 
         this.npcFishes.forEach(fish => {
-            if (fish.isEnemy) { 
-                fish.endX = playerCenter.x;
-                fish.endY = playerCenter.y;
-            }
             fish.move();
             fish.draw();
             fish.checkCollisionWithPlayer(this.animationFrameId);
@@ -416,7 +633,7 @@ class Game {
             <div class="modal-content ${bgImage ? 'finish-modal' : 'start-modal'}">
                 <p class="${bgImage ? 'finish-title' : 'title'}">${title}</p>
                 ${content}
-                <button id="${buttonId}" class="red-btn">${buttonText}</button>
+                ${buttonText ? `<button id="${buttonId}" class="red-btn">${buttonText}</button>`:  ''}
                 ${buttonExit ? '<button id="exit" class="dark-btn">Выйти</button>' : ''}
             </div>
             ${bgImage ? `<img src="./assets/${bgImage}.png" class="bg-modal">` : ''}
@@ -428,6 +645,13 @@ class Game {
         if(callback) {
             callback();
         }
+
+        document.querySelectorAll(`.answer-item`).forEach(el => {
+            el.addEventListener('click', () => {
+                const index = el.getAttribute("data-index");
+                this.handleAnswer(index);
+            });
+        })
     
         document.querySelector(`#${buttonId}`).addEventListener('click', () => {
             if (onButtonClick) onButtonClick(modal);
@@ -502,6 +726,25 @@ class Game {
 
     }
 
+    setQuestionModal(question) {
+        if(question) {
+            this.createModal({
+                className: "question",
+                title: `${question.question}`,
+                content: `
+                    <ul>
+                        ${question.answers.map((answer, index) => `
+                            <li>
+                                <button class="answer-item" data-index="${index}">${answer.text}</button>
+                            </li>
+                        `).join('')}
+                    </ul>
+                `
+            });
+        }
+    
+    }
+
     async postResource(url, data) {
         if(typeof data.tg_id === 'number' && typeof data.result === 'number') {
             try {
@@ -551,8 +794,8 @@ class Game {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    bot.expand();
-    new Game();
-});
+// document.addEventListener("DOMContentLoaded", () => {
+//     bot.expand();
+//     new Game();
+// });
 

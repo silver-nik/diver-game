@@ -1,14 +1,15 @@
-let getRandomInt = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+let getScaledDimensions = (originalWidth, originalHeight, targetWidth) => {
+    const aspectRatio = originalWidth / originalHeight;
+    const newWidth = targetWidth;
+    const newHeight = newWidth / aspectRatio;
+    return { newWidth, newHeight };
 }
 
-let getPlayerCenter = (player, canvas) => {
-    const rect = player.getBoundingClientRect();
-    const canvasRect = canvas.getBoundingClientRect();
-    return {
-        x: rect.left - canvasRect.left + rect.width / 2,
-        y: rect.top - canvasRect.top + rect.height / 2
-    };
-}
+let calculateLines = (canvasWidth) => {
+    const leftLine = canvasWidth * 0.25;  
+    const centerLine = canvasWidth * 0.5; 
+    const rightLine = canvasWidth * 0.75;
+    return [leftLine, centerLine, rightLine];
+};
 
-export { getPlayerCenter, getRandomInt }
+export { getScaledDimensions, calculateLines }

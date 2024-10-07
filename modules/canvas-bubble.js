@@ -4,10 +4,11 @@ class Bubble {
         this.y = y;
         this.radius = radius;
         this.dx = Math.random() * 2 + 1;
-	    this.dy = Math.random() * 7 + 9;
+	    this.dy = Math.random() * 7 + 15;
 
         this.image = new Image();
         this.image.src = "./assets/pixell.png";
+
     }
 
     draw(ctx) {
@@ -15,7 +16,6 @@ class Bubble {
         if (!this.image.complete) {
             return;
         }
-
 
         ctx.save();
         ctx.beginPath();
@@ -51,8 +51,8 @@ class BubbleContainer {
         this.image = new Image();
         this.image.src = "./assets/pixell.png";
 
-        this.maxBubbleSize = 70;
-        this.minBubbleSize = 50;
+        this.maxBubbleSize = 200;
+        this.minBubbleSize = 100;
 
         this.isEnd = false;
         this.hasCalledSetFinishModal = false;
@@ -71,8 +71,9 @@ class BubbleContainer {
     }
 
     createBubble() {
-        let x = Math.floor(Math.random() * (this.canvas.width)) - 100;
+        let x = Math.floor(Math.random() * (this.canvas.width)) - 200;
         let y = this.canvas.height + Math.floor(Math.random() * this.canvas.height);
+        
         let radius = Math.floor(Math.random() * (this.maxBubbleSize - this.minBubbleSize + 1)) + this.minBubbleSize;
 
         return new Bubble(x, y, radius);
@@ -114,6 +115,7 @@ class BubbleContainer {
     moveBubble() {
 
         for (let i = 0; i < this.max; i++) {
+            // console.log(this.bubbles);
             if(this.bubbles[i]) {
                 this.bubbles[i].move();
                 this.draw();
