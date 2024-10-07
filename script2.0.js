@@ -274,12 +274,6 @@ async function handleAnswer(answerIndex) {
 
 
     } else {
-        answerElements[answerIndex].classList.add('incorrect');
-
-        const correctAnswer = lastQuestion.answers.find(answer => answer.correct);
-        console.log(`Это неправильный ответ. Правильный ответ: ${correctAnswer.text}`);
-
-
         setTimeout(() => {
             resumeGame();
             document.querySelector('.modal')?.remove();
