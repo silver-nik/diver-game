@@ -1,23 +1,38 @@
 const gameConfig = {
 
     npcImages: ['./assets/npc.png', './assets/npc-2.png', './assets/npc-3.png', './assets/npc-6.png', './assets/npc-7.png', './assets/npc-8.png', './assets/npc-9.png'],
-    npcImages2: ['./assets/icons8-фонарь-80.png'],
+    npcImages2: ['./assets/npc.png', './assets/npc-2.png', './assets/npc-3.png', './assets/npc-6.png', './assets/npc-7.png', './assets/npc-8.png', './assets/npc-9.png',  './assets/npc-bottle.png'],
+
 
     increaseHpIcon: './assets/heart-icon.svg',
     decreaseHpIcon: './assets/heart-icon-lse.svg',
 
     enemies: [
         {
-            img: './assets/shark.png',
+            img: './assets/enemy-1.png',
             hp: 1,
         },
+        // {
+        //     img: './assets/shark-mid.png',
+        //     hp: 2,
+        // },
+        // {
+        //     img: './assets/shark-big.png',
+        //     hp: 3,
+        // }
+    ],
+
+    enemies2: [
         {
-            img: './assets/shark-mid.png',
-            hp: 2,
-        },
+            img: './assets/enemy-2.png',
+            hp: 1,
+        }
+    ],
+
+    enemies3: [
         {
-            img: './assets/shark-big.png',
-            hp: 3,
+            img: './assets/shark.png',
+            hp: 1,
         }
     ],
 

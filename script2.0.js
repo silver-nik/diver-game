@@ -25,6 +25,8 @@ let timeUntilNextElement = 100;
 let npcImages = gameConfig.npcImages;
 let npcImages2 = gameConfig.npcImages2;
 let enemies = gameConfig.enemies;
+let enemies2 = gameConfig.enemies2;
+let enemies3 = gameConfig.enemies3;
 
 let lastSharkHitTime = 0;
 const hitCooldown = 2000; 
@@ -35,8 +37,8 @@ let gamePaused = false;
 let askedQuestions = [];
 let correctAnswersCount = 0;
 let isFinal = false;
-let checkpoint = 2;
 
+let checkpoint = 6;
 
 const player = {
     x: playerX,
@@ -44,15 +46,28 @@ const player = {
     width: PLAYER_WIDTH,
     height: PLAYER_HEIGHT,
     draw() {
+
+        const isMid = correctAnswersCount >= checkpoint && correctAnswersCount < checkpoint * 2;
+        const isHigh = correctAnswersCount >= checkpoint * 2;
         
         const playerImage = new Image();
-        playerImage.src = this.isAttacking ? './assets/diver-action.png' : './assets/diver.png';
+        // playerImage.src = this.isAttacking ? './assets/diver-action.png' : './assets/diver.png';
+
+        if(isMid) {
+            playerImage.src = this.isAttacking ? './assets/player2.png' : './assets/player2.png';
+        }
+        else if(isHigh) {
+            playerImage.src = this.isAttacking ? './assets/player3.png' : './assets/player3.png';
+        }
+        else {
+            playerImage.src = this.isAttacking ? './assets/player1.png' : './assets/player1.png';
+        }
 
         const imgWidth = playerImage.naturalWidth;  
         const imgHeight = playerImage.naturalHeight;
 
         const aspectRatio = imgWidth / imgHeight;
-        const newWidth = PLAYER_WIDTH;
+        const newWidth = PLAYER_WIDTH - 60;
         const newHeight = newWidth / aspectRatio;
 
         ctx.drawImage(playerImage, this.x - newWidth / 2, this.y, newWidth, newHeight);
@@ -108,22 +123,32 @@ function createRandomElement() {
 
 function setElementImage(type, correctAnswers, element) {
 
-    let imageSource;
-    
     const isMid = correctAnswers >= checkpoint && correctAnswers < checkpoint * 2;
     const isHigh = correctAnswers >= checkpoint * 2;
+
+    let imageSource;
     
     switch (type) {
         case 0: // NPC
-            const npcImagesByLevel = isMid ? npcImages2 : npcImages;
-            imageSource = npcImagesByLevel[Math.floor(Math.random() * npcImagesByLevel.length)];
+            if (isHigh) {
+                imageSource = npcImages[Math.floor(Math.random() * npcImages.length)];
+            } else if (isMid) {
+                imageSource = npcImages2[Math.floor(Math.random() * npcImages2.length)];
+            } else {
+                imageSource = npcImages[Math.floor(Math.random() * npcImages.length)];
+            }
             break;
         case 1: // Enemy
-            const enemyImagesByLevel = enemies; 
-            imageSource = enemyImagesByLevel[Math.floor(Math.random() * enemyImagesByLevel.length)].img;
+            if (isHigh) {
+                imageSource = enemies3[Math.floor(Math.random() * enemies3.length)].img;
+            } else if (isMid) {
+                imageSource = enemies2[Math.floor(Math.random() * enemies2.length)].img;
+            } else {
+                imageSource = enemies[Math.floor(Math.random() * enemies.length)].img;
+            }
             break;
-        case 2: // Qestion
-            imageSource = './assets/question.png';
+        case 2: // Question
+            imageSource = './assets/box.png';
             break;
     }
 
@@ -131,6 +156,7 @@ function setElementImage(type, correctAnswers, element) {
     element.img.src = imageSource;
 
 }
+
 
 function checkCollision(player, element) {
 
@@ -186,8 +212,8 @@ function createModal(modalObj) {
         const {title, content, buttonId, buttonText} = slides[currentSlide];
         modal.innerHTML = `
             <img src="./assets/logo.svg" class="logo">
-            <div class="modal-content ${bgImage ? 'finish-modal' : 'start-modal'}">
-                <p class="${bgImage ? 'finish-title' : 'title'}">${title}</p>
+            ${className == "question" ? `<div class="modal-content question-modal">` : `<div class="modal-content ${bgImage ? 'finish-modal' : 'start-modal'}">`}
+                ${className == "question" ? `<p class="">${title}</p>` : `<p class="${bgImage ? 'finish-title' : 'title'}">${title}</p>`}
                 ${content}
                 ${buttonText ? `<button id="${buttonId}" class="red-btn">${buttonText}</button>`:  ''}
                 ${buttonExit ? '<button id="exit" class="dark-btn">Выйти</button>' : ''}
@@ -198,27 +224,38 @@ function createModal(modalObj) {
         document.querySelector(".fade").style.opacity = "1";
         document.querySelector(".fade").prepend(modal);
 
+        let answerIndex;
+
         try {
             document.querySelectorAll(`.answer-item`).forEach(el => {
                 el.addEventListener('click', () => {
-                    const index = el.getAttribute("data-index");
-                    handleAnswer(index);
+                    answerIndex = el.getAttribute("data-index");
+                    // handleAnswer(index);
                 });
             })
         } catch(e) {}
 
-        document.querySelector(`#${buttonId}`).addEventListener('click', () => {
-            if (currentSlide < slides.length - 1) {
-                currentSlide++;
+        try {
+            document.querySelector(`#${buttonId}`).addEventListener('click', () => {
+                if (currentSlide < slides.length - 1) {
+                    currentSlide++;
 
-                renderSlide();
-            } else {
-                if (onButtonClick && !isClicked) {
-                    onButtonClick(modal);
-                    isClicked = true;
+                    renderSlide();
+                } else {
+                    if (onButtonClick && !isClicked) {
+                
+                        if(buttonId == "check") {
+                            handleAnswer(answerIndex);
+                            isClicked = true;
+                        } else {
+                            onButtonClick(modal);
+                            isClicked = true;
+                        }
+
+                    }
                 }
-            }
-        });
+            });
+        } catch(e) {}
 
         try {
             document.querySelector(`#exit`).addEventListener('click', () => {
@@ -246,6 +283,7 @@ async function handleAnswer(answerIndex) {
     if(selectedAnswer.correct) {
         correctAnswersCount++;
         document.querySelector(".text").textContent = correctAnswersCount;
+        console.log(correctAnswersCount);
         
         if(correctAnswersCount == checkpoint || correctAnswersCount == (checkpoint * 2)) {
 
@@ -265,13 +303,22 @@ async function handleAnswer(answerIndex) {
             console.log(`Это правильный ответ, это ${correctAnswersCount} правильный ответ`);
             answerElements[answerIndex].classList.add('correct');
 
-            setTimeout(() => {
+            document.querySelector("#check").textContent = "Поплыли";
+            document.querySelector("#check").addEventListener("click", (e) => {
                 resumeGame();
                 document.querySelector('.modal')?.remove();
                 document.querySelector(".fade").style.display = "none";
-            }, 1000);
+            });
+
+            // setTimeout(() => {
+                // resumeGame();
+                // document.querySelector('.modal')?.remove();
+                // document.querySelector(".fade").style.display = "none";
+            // }, 1000);
         }
 
+
+        
 
     } else {
         setTimeout(() => {
@@ -329,11 +376,16 @@ function setQuestionModal(question) {
                         <ul>
                             ${question.answers.map((answer, index) => `
                                 <li>
-                                    <button class="answer-item" data-index="${index}">${answer.text}</button>
+                                    <label for="answer-${index}" class="answer-item" data-index="${index}">
+                                        <input type="radio" name="radio" id="answer-${index}">
+                                        <span>${answer.text}</span>
+                                    </label>
                                 </li>
                             `).join('')}
                         </ul>
                     `,
+                    buttonId: "check",
+                    buttonText: "Ответить"
                 },
             ]
         }, handleAnswer);
@@ -344,22 +396,22 @@ function setQuestionModal(question) {
 function setCheckpointModal(point) {
 
     const checkpointTitle = {
-        [checkpoint]: "Вы прошли первый уровень!",
-        [checkpoint * 2]: "Вы прошли второй уровень!",
+        [checkpoint]: "Уровень 2 <br/> PT Sandbox",
+        [checkpoint * 2]: "Уровень 3 <br/> PT NAD + PT Sandbox <br/> (PT Anti-APT)",
     };
 
     const checkpointMessages = {
-        [checkpoint]: "<p class='finish-text'>Теперь NPC фонари</p>",
-        [checkpoint * 2]: "<p class='finish-text'>Теперь NPC снова рыбы</p>",
+        [checkpoint]: "<p class='preview'>Уровень 2. На нашего дайвера валится куча посланий в бутылках — в некоторых из них прячутся зловреды. Уничтожай «злые» бутылки эхолокатором и лови сундучки с вопросами. <br/><br/> Будь осторожен — у тебя только три жизни.</p>",
+        [checkpoint * 2]: "<p class='preview'>Уровень 3. Акулы-хакеры решили погубить нашего дайвера — здесь нужна тяжелая артиллерия. Уничтожай акул специальным ружьем и не забывай ловить вопросы. <br/><br/> У тебя по-прежнему три жизни.</p>",
     };
 
     const title = checkpointTitle[point] || "";
     const message = checkpointMessages[point] || "";
 
     createModal({
-        className: "final",
-        buttonExit: true,
-        bgImage: "sccss",
+        className: "start-modal",
+        buttonExit: false,
+        bgImage: "",
         onButtonClick: async (modal) => {
             bubble.moveBubble(); 
             await bubble.waitBubblesEnd(resumeGame);
@@ -373,7 +425,7 @@ function setCheckpointModal(point) {
                 title: title,
                 content: message,
                 buttonId: "play-again",
-                buttonText: "Играть"
+                buttonText: "ПОПЛЫЛИ"
             }
         ]
     });
@@ -396,10 +448,8 @@ function setFinishModal() {
         callback: () => {},
         slides: [
             {
-                title: isFinal ? "Победа!" : ``,
-                content: isFinal ? `<p class="finish-text">Приходи на NetCase Day, чтобы побороться за приз и увидеть, как ловят сетевые угрозы PT Sandbox и PT NAD</p>` : "",
-                buttonId: "play-again",
-                buttonText: "Сыграть ещё раз"
+                title: isFinal ? "Победа!" : `Проигрыш`,
+                content: isFinal ? `<p class="finish-text">Ты настоящий эксперт в сетевой безопасности. Твой сертификат уже лежит в меню чат-бота —  покажи его на стойке выдачи мерча, чтобы забрать приз</p>` : `<p class="finish-text">Жаль, у тебя закончились жизни. Попробуй еще раз через 10 минут, а пока послушай доклады!</p>`,
             }
         ]
     });
@@ -431,22 +481,16 @@ function setStartModal() {
         callback: () => {},
         slides: [
             {
-                title: "Общее",
-                content: "<p class='preview'>Рассказываем, для чего играть.</p>",
+                title: "Играем!",
+                content: "<p class='preview'>Тебе нужно пройти 3 уровня — уничтожай угрозы, лови сундучки с вопросами и отвечай на них. Подробнее о правилах читай в описании бота.</p>",
                 buttonId: "next1",
                 buttonText: "Далее"
             },
             {
-                title: "Механика игры",
-                content: "<p class='preview'>Как стрелять, как двигаться по секторам.</p>",
-                buttonId: "next2",
-                buttonText: "Далее"
-            },
-            {
-                title: "Ответы на вопросы",
-                content: "<p class='preview'>Рассказываем для чего отвечать на вопросы, какой успешный результат уровня.</p>",
+                title: "Уровень 1 PT NAD",
+                content: "<p class='preview'>Коварный удильщик с подозрительным EXE-файлом хочет внедриться в сеть компании. В руках дайвера фонарик, свет которого поможет вывести злоумышленника на чистую воду. <br/><br/> Тапай на удильщиков и лови сундучки с вопросами. Будь осторожен — у тебя только три жизни.</p>",
                 buttonId: "startGame",
-                buttonText: "Начать игру"
+                buttonText: "Поплыли"
             }
         ]
     });
@@ -482,6 +526,8 @@ function updateGame() {
     }
 
     player.y = playerYPosition;
+
+    highlightLine();
 
     player.draw();
 
@@ -547,7 +593,7 @@ function resizeCanvas() {
     canvas.height = rect.height;
 
     playerYStartPosition = canvas.height; 
-    playerYTargetPosition = canvas.height - PLAYER_HEIGHT - 120; 
+    playerYTargetPosition = canvas.height - PLAYER_HEIGHT - 80; 
     playerYPosition = playerYStartPosition; 
 
     LINES_X = calculateLines(canvas.width);
@@ -615,9 +661,42 @@ function attack() {
     }, 1000);
 }
 
+function highlightLine() {
+    const playerLineIndex = LINES_X.indexOf(player.x);
+
+    if (playerLineIndex !== -1) {
+        const lineX = LINES_X[playerLineIndex];
+        const lineWidth = PLAYER_WIDTH; 
+
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+
+        gradient.addColorStop(0, 'rgba(44, 81, 148, 0)'); 
+        gradient.addColorStop(0.3, 'rgba(77, 140, 255, 0.005)'); 
+        gradient.addColorStop(0.5033, 'rgba(77, 140, 255, 0.005)'); 
+        gradient.addColorStop(0.8, 'rgba(44, 81, 148, 0.25)'); 
+        gradient.addColorStop(1, 'rgba(44, 81, 148, 0.25)');
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(lineX - lineWidth / 2, 0, lineWidth, canvas.height);
+
+        const borderGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        borderGradient.addColorStop(0.2, 'rgba(77, 140, 255, 0.0)');
+        borderGradient.addColorStop(0.8, 'rgba(77, 140, 255, 0.25)');
+
+        ctx.fillStyle = borderGradient;
+        ctx.fillRect(lineX - lineWidth / 2 - 2, 0, 2, canvas.height);
+        ctx.fillRect(lineX + lineWidth / 2, 0, 2, canvas.height); 
+    }
+}
+
+
 attackButton.addEventListener('click', attack);
 
 window.onload = resizeCanvas;
 window.onresize = resizeCanvas;
 setStartModal();
+// updateGame();
+
+// const question = getRandomQuestion(askedQuestions, correctAnswersCount, checkpoint);
+//                 setQuestionModal(question);
 bubble.setBubbleArr();
