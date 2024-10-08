@@ -214,7 +214,9 @@ function createModal(modalObj) {
             <img src="./assets/logo.svg" class="logo">
             ${className == "question" ? `<div class="modal-content question-modal">` : `<div class="modal-content ${bgImage ? 'finish-modal' : 'start-modal'}">`}
                 ${className == "question" ? `<p class="">${title}</p>` : `<p class="${bgImage ? 'finish-title' : 'title'}">${title}</p>`}
-                ${content}
+                <div class="preview-wrapper">
+                    ${content}
+                </div>
                 ${buttonText ? `<button id="${buttonId}" class="red-btn">${buttonText}</button>`:  ''}
                 ${buttonExit ? '<button id="exit" class="dark-btn">Выйти</button>' : ''}
             </div>
@@ -487,7 +489,7 @@ function setStartModal() {
                 buttonText: "Далее"
             },
             {
-                title: "Уровень 1 PT NAD",
+                title: "Уровень 1 <br/> PT NAD",
                 content: "<p class='preview'>Коварный удильщик с подозрительным EXE-файлом хочет внедриться в сеть компании. В руках дайвера фонарик, свет которого поможет вывести злоумышленника на чистую воду. <br/><br/> Тапай на удильщиков и лови сундучки с вопросами. Будь осторожен — у тебя только три жизни.</p>",
                 buttonId: "startGame",
                 buttonText: "Поплыли"
@@ -694,9 +696,9 @@ attackButton.addEventListener('click', attack);
 
 window.onload = resizeCanvas;
 window.onresize = resizeCanvas;
-setStartModal();
+// setStartModal();
 // updateGame();
 
-// const question = getRandomQuestion(askedQuestions, correctAnswersCount, checkpoint);
-//                 setQuestionModal(question);
+const question = getRandomQuestion(askedQuestions, correctAnswersCount, checkpoint);
+                setQuestionModal(question);
 bubble.setBubbleArr();
