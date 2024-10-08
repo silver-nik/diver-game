@@ -696,9 +696,9 @@ attackButton.addEventListener('click', attack);
 
 window.onload = resizeCanvas;
 window.onresize = resizeCanvas;
-// setStartModal();
+setStartModal();
 // updateGame();
 
-const question = getRandomQuestion(askedQuestions, correctAnswersCount, checkpoint);
-                setQuestionModal(question);
+// const question = getRandomQuestion(askedQuestions, correctAnswersCount, checkpoint);
+//                 setQuestionModal(question);
 bubble.setBubbleArr();
