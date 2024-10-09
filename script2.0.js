@@ -110,8 +110,11 @@ function createRandomElement() {
         speed: 2 + Math.random() * 2,
         type: type,
         img: null,
-        amplitude: 5,
-        period: 0.05,
+        // amplitude: 5,
+        // period: 0.05,
+        amplitude: 2,
+        period: 0.005,
+        time: 0, 
 
         draw() {
              if (this.img) {
@@ -121,10 +124,16 @@ function createRandomElement() {
         },
         update() {
             this.y += this.speed;
+
   
             if (this.type === 1) {
-                this.x += this.amplitude * Math.sin(this.y * this.period);
-            }
+                // console.log(this.speed);
+                // this.x += this.amplitude * Math.sin(this.y * this.period);
+
+                this.time += 0.1;
+                this.x += this.amplitude * Math.sin(this.time);
+            
+            } 
 
         }
     };
@@ -455,8 +464,8 @@ function setCheckpointModal(point) {
     };
 
     const checkpointMessages = {
-        [1]: "<p class='preview'>Уровень 2. На нашего дайвера валится куча посланий в бутылках — в некоторых из них прячутся зловреды. Уничтожай «злые» бутылки эхолокатором и лови сундучки с вопросами. <br/><br/> Будь осторожен — у тебя только три жизни.</p>",
-        [2]: "<p class='preview'>Уровень 3. Акулы-хакеры решили погубить нашего дайвера — здесь нужна тяжелая артиллерия. Уничтожай акул специальным ружьем и не забывай ловить вопросы. <br/><br/> У тебя по-прежнему три жизни.</p>",
+        [1]: "<p class='preview'>На нашего дайвера валится куча посланий в бутылках — в некоторых из них прячутся зловреды. Уничтожай «злые» бутылки эхолокатором и лови сундучки с вопросами. <br/><br/> Будь осторожен — у тебя только три жизни.</p>",
+        [2]: "<p class='preview'>Акулы-хакеры решили погубить нашего дайвера — здесь нужна тяжелая артиллерия. Уничтожай акул специальным ружьем и не забывай ловить вопросы. <br/><br/> У тебя по-прежнему три жизни.</p>",
     };
 
     const title = checkpointTitle[point] || "";
@@ -721,6 +730,7 @@ function attack() {
     let closestElement = null;
     let minDistance = Infinity; 
     const tolerance = 50;
+    
 
     elements.forEach((element, index) => {
         if (element.type == 1 && Math.abs(element.x - player.x) <= tolerance) { 
@@ -732,6 +742,10 @@ function attack() {
             }
         }
     });
+
+    if (navigator.vibrate) {
+        navigator.vibrate(200);
+    }
 
     if (closestElement !== null) {
         elements.splice(closestElement, 1);
