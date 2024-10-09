@@ -805,7 +805,7 @@ async function handleAnswer(answerIndex) {
         else {
             answerElements[answerIndex].classList.add('correct');
 
-            document.querySelector("#check").textContent = "Поплыли";
+            document.querySelector("#check").textContent = "Плывем дальше";
             document.querySelector("#check").addEventListener("click", (e) => {
                 resumeGame();
                 document.querySelector('.modal')?.remove();
@@ -836,7 +836,7 @@ async function handleAnswer(answerIndex) {
             const correctAnswerIndex = lastQuestion.answers.findIndex(answer => answer.correct);
             answerElements[correctAnswerIndex].classList.add('correct');
 
-            document.querySelector("#check").textContent = "Поплыли";
+            document.querySelector("#check").textContent = "Плывем дальше";
             document.querySelector("#check").addEventListener("click", (e) => {
                 resumeGame();
                 document.querySelector('.modal')?.remove();
