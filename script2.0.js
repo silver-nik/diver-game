@@ -261,6 +261,8 @@ function createModal(modalObj) {
                 el.addEventListener('click', () => {
                     answerIndex = el.getAttribute("data-index");
                     // handleAnswer(index);
+                    isClicked = false;
+
                 });
             })
         } catch(e) {}
@@ -275,7 +277,7 @@ function createModal(modalObj) {
                     if (onButtonClick && !isClicked) {
                 
                         if(buttonId == "check") {
-                            handleAnswer(answerIndex);
+                            if(answerIndex) handleAnswer(answerIndex);
                             isClicked = true;
                         } else {
                             onButtonClick(modal);
@@ -311,7 +313,6 @@ async function handleAnswer(answerIndex) {
     answerElements.forEach(el => el.classList.remove('correct', 'incorrect'));
     
     sumAnswersCount++;
-
 
     if(selectedAnswer.correct) {
         correctAnswersCount++;
