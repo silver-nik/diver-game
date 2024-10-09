@@ -706,7 +706,8 @@ document.addEventListener('keydown', (event) => {
 });
 
 canvas.addEventListener('touchstart', (event) => {
-    const touchX = event.touches[0].clientX;
+    const rect = canvas.getBoundingClientRect();
+    const touchX = event.touches[0].clientX - rect.left;
 
     if (touchX < canvas.width / 2 && player.x > LINES_X[0]) {
         player.x = LINES_X[LINES_X.indexOf(player.x) - 1];
