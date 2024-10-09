@@ -1,5 +1,7 @@
 const gameConfig = {
 
+    url: 'https://jsonplaceholder.typicode.com/posts/', // endpoint https://ptgame.idurn.ru/save_game_result
+
     npcImages: ['./assets/npc.png', './assets/npc-2.png', './assets/npc-3.png', './assets/npc-6.png', './assets/npc-7.png', './assets/npc-8.png', './assets/npc-9.png'],
     npcImages2: ['./assets/npc.png', './assets/npc-2.png', './assets/npc-3.png', './assets/npc-6.png', './assets/npc-7.png', './assets/npc-8.png', './assets/npc-9.png',  './assets/npc-bottle.png'],
 
@@ -12,14 +14,6 @@ const gameConfig = {
             img: './assets/enemy-1.png',
             hp: 1,
         },
-        // {
-        //     img: './assets/shark-mid.png',
-        //     hp: 2,
-        // },
-        // {
-        //     img: './assets/shark-big.png',
-        //     hp: 3,
-        // }
     ],
 
     enemies2: [

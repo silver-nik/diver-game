@@ -54,12 +54,8 @@ const player = {
     width: PLAYER_WIDTH,
     height: PLAYER_HEIGHT,
     draw() {
-
-        // const isMid = sumAnswersCount >= checkpoint && sumAnswersCount < checkpoint * 2;
-        // const isHigh = sumAnswersCount >= checkpoint * 2;
-        
+           
         const playerImage = new Image();
-        // playerImage.src = this.isAttacking ? './assets/diver-action.png' : './assets/diver.png';
 
         if(currentLevel == 1) {
             playerImage.src = this.isAttacking ? './assets/player2.png' : './assets/player2.png';
@@ -89,7 +85,7 @@ function createRandomElement() {
     const randomValue = Math.random();
     let type;
 
-    if (randomValue <  0.1) {
+    if (randomValue <  0.08) {
         type = 2; // Question
     } else if (randomValue < 0.7) {
         type = 0; // NPC
@@ -127,7 +123,6 @@ function createRandomElement() {
 
   
             if (this.type === 1) {
-                // console.log(this.speed);
                 // this.x += this.amplitude * Math.sin(this.y * this.period);
 
                 this.time += 0.1;
@@ -143,6 +138,27 @@ function createRandomElement() {
     setElementImage(type, correctAnswersCount, element);
 
     elements.push(element);
+}
+
+async function postResource(url, data) {
+    if(typeof data.tg_id === 'number' && typeof data.result === 'number') {
+        try {
+            await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8',
+                },
+                body: JSON.stringify(data)
+            })
+            .then((response) => response.json())
+            .then((json) => console.log("scss"))
+            .catch(error => {
+                console.log(error);
+            }); 
+        } catch(e) {    }
+    } else {
+        console.log("scss");
+    }
 }
 
 function setElementImage(type, correctAnswers, element) {
@@ -181,7 +197,6 @@ function setElementImage(type, correctAnswers, element) {
 
 }
 
-
 function checkCollision(player, element) {
 
     const tolerance = 10;
@@ -196,20 +211,6 @@ function checkCollision(player, element) {
         player.y < element.y + element.height &&
         player.y + player.height > element.y
     );
-
-    // const playerLineIndex = LINES_X.indexOf(player.x);
-    // const elementLineIndex = LINES_X.indexOf(element.x);
-
-    // if (playerLineIndex !== elementLineIndex) {
-    //     return false;
-    // }
-
-    // return (
-    //     player.x < element.x + element.width / 2 &&
-    //     player.x + player.width > element.x - element.width / 2 &&
-    //     player.y < element.y + element.height &&
-    //     player.y + player.height > element.y
-    // );
 
 }
 
@@ -402,19 +403,6 @@ function getRandomQuestion() {
         availableQuestions = gameConfig.questions3.filter(q => !askedQuestions.includes(q));
     } 
 
-    // if (availableQuestions.length === 0) {
-
-    //     // askedQuestions = [];
-
-    //     // if (correctAnswersCount < checkpoint) {
-    //     //     availableQuestions = gameConfig.questions1;
-    //     // } else if (correctAnswersCount >= checkpoint && correctAnswersCount < (checkpoint * 2)) {
-    //     //     availableQuestions = gameConfig.questions2;
-    //     // } else if (correctAnswersCount >= (checkpoint * 2)) {
-    //     //     availableQuestions = gameConfig.questions3;
-    //     // }
-    // }
-
     const randomIndex = Math.floor(Math.random() * availableQuestions.length);
     const question = availableQuestions[randomIndex];
 
@@ -513,6 +501,14 @@ function setFinishModal() {
     levelCompleted = true;
     updateScore();
 
+    let uniqueCode = generateUniqueCode(parseInt(localStorage.getItem('uid')));
+
+    // postResource(gameConfig.url, {
+    //     tg_id: parseInt(localStorage.getItem('uid')),
+    //     result: totalPoints,
+    //     code: uniqueCode
+    // });
+
     createModal({
         className: "final",
         buttonExit: true,
@@ -530,7 +526,7 @@ function setFinishModal() {
         slides: [
             {
                 title: isFinal ? "Победа!" : `Проигрыш`,
-                content: isFinal ? `<p class="finish-text">Ты настоящий эксперт в сетевой безопасности. Твой сертификат уже лежит в меню чат-бота —  покажи его на стойке выдачи мерча, чтобы забрать приз</p><br/><p class="code">${generateUniqueCode(1234)}</p>` : `<p class="finish-text">Жаль, у тебя закончились жизни. Попробуй еще раз через 10 минут, а пока послушай доклады!</p>`,
+                content: isFinal ? `<p class="finish-text">Ты настоящий эксперт в сетевой безопасности. Твой сертификат уже лежит в меню чат-бота —  покажи его на стойке выдачи мерча, чтобы забрать приз</p><br/><p class="code">${uniqueCode}</p>` : `<p class="finish-text">Жаль, у тебя закончились жизни. Попробуй еще раз через 10 минут, а пока послушай доклады!</p>`,
             }
         ]
     });
@@ -698,7 +694,6 @@ function resetGame() {
     playerLives = 3;
     elements = [];
     player.x = LINES_X[1];
-    // document.querySelector(".text").textContent = 0;
     isEnd = false;
     gamePaused = false;
     askedQuestions = [];
@@ -759,33 +754,6 @@ function attack() {
 
 }
 
-
-// function attack() {
-//     let closestElement = null;
-//     let minDistance = Infinity; 
-
-//     elements.forEach((element, index) => {
-//         if (element.x === player.x && element.type == 1) { 
-//             const distance = Math.abs(element.y - player.y);
-
-//             if (distance < minDistance) {
-//                 minDistance = distance;
-//                 closestElement = index;
-//             }
-//         }
-//     });
-
-//     if (closestElement !== null) {
-//         elements.splice(closestElement, 1);
-//     }
-
-//     player.isAttacking = true;
-
-//     setTimeout(() => {
-//         player.isAttacking = false;
-//     }, 1000);
-// }
-
 function highlightLine() {
     const playerLineIndex = LINES_X.indexOf(player.x);
 
@@ -814,14 +782,9 @@ function highlightLine() {
     }
 }
 
-
 attackButton.addEventListener('click', attack);
 
 window.onload = resizeCanvas;
 window.onresize = resizeCanvas;
 setStartModal();
-// updateGame();
-
-// const question = getRandomQuestion(askedQuestions, correctAnswersCount, checkpoint);
-//                 setQuestionModal(question);
 bubble.setBubbleArr();

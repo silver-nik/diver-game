@@ -12,7 +12,7 @@ let calculateLines = (canvasWidth) => {
     return [leftLine, centerLine, rightLine];
 };
 
-let generateUniqueCode = (userId) => {
+let generateUniqueCode = (userId = 124) => {
     if (typeof userId !== 'number') {
         throw new Error('Должен быть числом');
     }
