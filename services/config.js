@@ -52,21 +52,23 @@ const gameConfig = {
             ]
         },
         {
-            question: "Назовите, какой из методов обнаружения угроз НЕ используется в PT NAD?",
+            question: "Какого метода обнаружения угроз нет в PT NAD?",
             answers: [
                 { text: "сигнатурный", correct: false },
                 { text: "ML", correct: false },
                 { text: "AI", correct: true }
             ]
         },
+
         {
-            question: "Каким образом в PT NAD реализована проверка файлов?",
+            question: "Как в PT NAD реализована проверка файлов?",
             answers: [
-                { text: "на основе индикаторов компрометации", correct: false },
-                { text: "при помощи интеграции с Sandbox", correct: false },
-                { text: "оба варианта верны", correct: true }
+                { text: "На основе индикаторов компрометации", correct: false },
+                { text: "При помощи интеграции с PT Sandbox", correct: false },
+                { text: "Оба варианта верны", correct: true }
             ]
         },
+
         {
             question: "Какой тип хэша используется в качестве индикатора компрометации?",
             answers: [
@@ -76,10 +78,11 @@ const gameConfig = {
                 { text: "sha512", correct: false }
             ]
         },
+
         {
-            question: "Укажите, умеет ли PT NAD выявлять нестойкие пароли?",
+            question: "Может ли PT NAD выявлять нестойкие пароли?",
             answers: [
-                { text: "Да, только для нешифрованного трафика", correct: true },
+                { text: "Да, только в нешифрованном трафике", correct: true },
                 { text: "Да, во всем трафике", correct: false },
                 { text: "Нет", correct: false }
             ]
@@ -92,17 +95,17 @@ const gameConfig = {
             ]
         },
         {
-            question: "Умеет ли PT NAD расшифровывать трафик?",
+            question: "Может ли PT NAD расшифровывать трафик?",
             answers: [
                 { text: "Нет", correct: true },
                 { text: "Да", correct: false }
             ]
         },
         {
-            question: "Умеет PT NAD находить атаки в шифрованном трафике?",
+            question: "Может ли PT NAD находить атаки в шифрованном трафике?",
             answers: [
-                { text: "Да, при помощи поиска аномалий и сигнатур", correct: true },
-                { text: "Нет, т.к. PT NAD не умеет расшифровывать трафик", correct: false }
+                { text: "Да, при помощи поиска аномалий и сигнатурного анализа", correct: true },
+                { text: "Нет, так как PT NAD не может расшифровывать трафик", correct: false }
             ]
         },
         {
@@ -133,7 +136,7 @@ const gameConfig = {
             ]
         },
         {
-            question: "Как называется вредоносная программа, которая умеет «возрождаться» как феникс после удаления и перезагрузки ОС (такое ВПО умеет ловить PT Sandbox)?",
+            question: "Как называется вредоносная программа, которая может «возрождаться» как феникс после удаления и перезагрузки ОС? Кстати, PT Sandbox может ловить такое ВПО ",
             answers: [
                 { text: "Буткит", correct: false },
                 { text: "Шифровальщик", correct: false },
@@ -151,16 +154,16 @@ const gameConfig = {
             ]
         },
         {
-            question: "На каких уровнях умеет ловить ВПО PT Sandbox?",
+            question: "На каких уровнях PT Sandbox обнаруживает ВПО?",
             answers: [
-                { text: "Уровень гипервизора", correct: false },
-                { text: "Уровень виртуальной машины", correct: false },
-                { text: "Уровень ядра ОС", correct: false },
-                { text: "На всех перечисленных", correct: true }
+                { text: "Гипервизор", correct: false },
+                { text: "Виртуальная машина", correct: false },
+                { text: "Ядро ОС", correct: false },
+                { text: "Все перечисленные", correct: true }
             ]
         },
         {
-            question: "По каким протоколам умеет интегрироваться PT Sandbox с другими IT и ИБ системами?",
+            question: "По каким протоколам PT Sandbox интегрируется с другими системами ИБ и ИТ?",
             answers: [
                 { text: "API", correct: false },
                 { text: "ICAP", correct: false },
@@ -176,6 +179,7 @@ const gameConfig = {
                 { text: "Раз в год", correct: false }
             ]
         },
+
         {
             question: "Какие возможности по снижению нагрузки на поведенческий анализ есть в PT Sandbox?",
             answers: [
@@ -185,19 +189,19 @@ const gameConfig = {
             ]
         },
         {
-            question: "Для каких целей используются машинные технологии в PT Sandbox?",
+            question: "Для каких целей используются технологии машинного обучения в PT Sandbox?",
             answers: [
-                { text: "Для улучшения качества детекта", correct: true },
-                { text: "Для проверки по хэш-суммам", correct: false },
+                { text: "Для улучшения качества обнаружения", correct: true },
+                { text: "Для проверки по хеш-суммам", correct: false },
                 { text: "Для «галочки»", correct: false }
             ]
         },
         {
-            question: "Какое ограничение имеет инсталляция PT Sandbox по объему принимаемых объектов?",
+            question: "Какое ограничение по объему принимаемых объектов есть у инсталляции PT Sandbox",
             answers: [
-                { text: "Не более 10,000 в час", correct: false },
-                { text: "Не более 100,000 в час", correct: false },
-                { text: "Нет ограничения ввиду возможности горизонтального масштабирования", correct: true }
+                { text: "Не более 10 000 в час", correct: false },
+                { text: "Не более 100 000 в час", correct: false },
+                { text: "Нет ограничения благодаря возможности горизонтального масштабирования", correct: true }
             ]
         }
     ],
@@ -236,38 +240,14 @@ const gameConfig = {
             ]
         },
         {
-            question: "Из каких основных компонентов состоит PT AntiAPT решение?",
+            question: "Из каких основных компонентов состоит решение PT Anti-APT?",
             answers: [
-                { text: "PT SIEM, PT NAD, PT Sandbox", correct: false },
+                { text: "MaxPatrol SIEM, PT NAD, PT Sandbox", correct: false },
                 { text: "PT NAD, PT Sandbox", correct: true },
-                { text: "PT NAD, PT Sandbox, TA", correct: false },
-                { text: "PT NAD, PT SIEM", correct: false }
+                { text: "PT NAD, PT Sandbox, PT Threat Analyzer", correct: false },
+                { text: "PT NAD, MaxPatrol SIEM", correct: false }
             ]
         },
-        {
-            question: "Как часто выходят обновления PT Sandbox?",
-            answers: [
-                { text: "Раз в месяц", correct: true },
-                { text: "Раз в квартал", correct: false },
-                { text: "Раз в полгода", correct: false },
-                { text: "Раз в год", correct: false }
-            ]
-        },
-        {
-            question: "Какие возможности по снижению нагрузки на поведенческий анализ есть в PT Sandbox?",
-            answers: [
-                { text: "Дополнительный антивирус", correct: false },
-                { text: "Настройки предварительной фильтрации", correct: true },
-                { text: "Ручная проверка файлов", correct: false }
-            ]
-        },
-        {
-            question: "Современные атаки зачастую используют DNS-туннели для организации связи с командными центрами злоумышленников. Умеет ли PT NAD выявлять такие каналы?",
-            answers: [
-                { text: "Да. В PT NAD реализован механизм выявления DGA-доменов", correct: true },
-                { text: "Нет. PT NAD не имеет таких сигнатур", correct: false }
-            ]
-        }
     ],
     
 };

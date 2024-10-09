@@ -245,8 +245,6 @@ input[type="radio"]:checked::before {
 .question-modal p {
     margin-bottom: 40px;
     margin-top: 0;
-    max-height: 20vh;
-    overflow-y: auto;
     font-size: 14px;
 }
 
@@ -548,7 +546,7 @@ input[type="radio"]:checked::before {
 
 .preview {
     font-weight: 700;
-    font-size: 18px;
+    font-size: 15px;
     line-height: 28px;
     text-align: left;
     color: #fff;
@@ -564,8 +562,19 @@ input[type="radio"]:checked::before {
     width: 80%;
     margin-top: 40px;
     margin-bottom: 46px;
-    overflow: auto;
-    max-height: 25vh;
+}
+
+.finish-modal .preview-wrapper {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.code {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 40px;
+    text-align: center;
+    color: #DCA043;
 }
 
 .modal-content.question-modal {
@@ -575,7 +584,6 @@ input[type="radio"]:checked::before {
 .modal-content.question-modal .preview-wrapper {
     margin-top: 0;
     width: 100%;
-    max-height: 30vh;
 }
 
 .preview span {
@@ -629,13 +637,12 @@ input[type="radio"]:checked::before {
 }
 
 .finish-text {
-    font-size: 24px;
+    font-size: 15px;
     font-weight: 700;
     line-height: 32px;
     text-align: center;
     color: #fff;
     margin: 0;
-    max-width: 300px;
     width: 100%;
 }
 
@@ -677,5 +684,21 @@ input[type="radio"]:checked::before {
     }
     100% {
         transform: translate(0, 0);
+    }
+}
+
+@media(max-width: 340px) {
+    .preview-wrapper {
+        overflow: auto;
+        max-height: 25vh;   
+    }
+
+    .question-modal p {
+        max-height: 20vh;
+        overflow-y: auto;
+    }
+
+    .finish-text {
+        max-width: 300px;
     }
 }

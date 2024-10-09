@@ -1,5 +1,5 @@
 import { gameConfig } from './services/config.js';
-import { getScaledDimensions, calculateLines } from './services/utils.js';
+import { getScaledDimensions, calculateLines, generateUniqueCode } from './services/utils.js';
 import BubbleContainer from './modules/canvas-bubble.js';
 
 const canvas = document.getElementById('gameCanvas');
@@ -36,9 +36,17 @@ let isEnd = false;
 let gamePaused = false;
 let askedQuestions = [];
 let correctAnswersCount = 0;
+let sumAnswersCount  = 0;
 let isFinal = false;
 
-let checkpoint = 6;
+let totalPoints = 0;  
+let levelCompleted = false; 
+let allAnswersCorrect = false;
+
+const checkpointPerLevel = [gameConfig.questions1.length, gameConfig.questions2.length, gameConfig.questions3.length];
+let currentLevel = 0;
+let checkpoint = 1;
+
 
 const player = {
     x: playerX,
@@ -47,16 +55,16 @@ const player = {
     height: PLAYER_HEIGHT,
     draw() {
 
-        const isMid = correctAnswersCount >= checkpoint && correctAnswersCount < checkpoint * 2;
-        const isHigh = correctAnswersCount >= checkpoint * 2;
+        // const isMid = sumAnswersCount >= checkpoint && sumAnswersCount < checkpoint * 2;
+        // const isHigh = sumAnswersCount >= checkpoint * 2;
         
         const playerImage = new Image();
         // playerImage.src = this.isAttacking ? './assets/diver-action.png' : './assets/diver.png';
 
-        if(isMid) {
+        if(currentLevel == 1) {
             playerImage.src = this.isAttacking ? './assets/player2.png' : './assets/player2.png';
         }
-        else if(isHigh) {
+        else if(currentLevel == 2) {
             playerImage.src = this.isAttacking ? './assets/player3.png' : './assets/player3.png';
         }
         else {
@@ -81,8 +89,6 @@ function createRandomElement() {
     const randomValue = Math.random();
     let type;
 
-    console.log(randomValue);
-
     if (randomValue <  0.1) {
         type = 2; // Question
     } else if (randomValue < 0.7) {
@@ -104,6 +110,8 @@ function createRandomElement() {
         speed: 2 + Math.random() * 2,
         type: type,
         img: null,
+        amplitude: 5,
+        period: 0.05,
 
         draw() {
              if (this.img) {
@@ -113,8 +121,15 @@ function createRandomElement() {
         },
         update() {
             this.y += this.speed;
+  
+            if (this.type === 1) {
+                this.x += this.amplitude * Math.sin(this.y * this.period);
+            }
+
         }
     };
+
+    
 
     setElementImage(type, correctAnswersCount, element);
 
@@ -123,8 +138,8 @@ function createRandomElement() {
 
 function setElementImage(type, correctAnswers, element) {
 
-    const isMid = correctAnswers >= checkpoint && correctAnswers < checkpoint * 2;
-    const isHigh = correctAnswers >= checkpoint * 2;
+    const isMid = currentLevel == 1;
+    const isHigh = currentLevel == 2;
 
     let imageSource;
     
@@ -160,10 +175,9 @@ function setElementImage(type, correctAnswers, element) {
 
 function checkCollision(player, element) {
 
-    const playerLineIndex = LINES_X.indexOf(player.x);
-    const elementLineIndex = LINES_X.indexOf(element.x);
+    const tolerance = 10;
 
-    if (playerLineIndex !== elementLineIndex) {
+    if (Math.abs(player.x - element.x) > tolerance) {
         return false;
     }
 
@@ -173,6 +187,20 @@ function checkCollision(player, element) {
         player.y < element.y + element.height &&
         player.y + player.height > element.y
     );
+
+    // const playerLineIndex = LINES_X.indexOf(player.x);
+    // const elementLineIndex = LINES_X.indexOf(element.x);
+
+    // if (playerLineIndex !== elementLineIndex) {
+    //     return false;
+    // }
+
+    // return (
+    //     player.x < element.x + element.width / 2 &&
+    //     player.x + player.width > element.x - element.width / 2 &&
+    //     player.y < element.y + element.height &&
+    //     player.y + player.height > element.y
+    // );
 
 }
 
@@ -282,27 +310,30 @@ async function handleAnswer(answerIndex) {
 
     answerElements.forEach(el => el.classList.remove('correct', 'incorrect'));
     
+    sumAnswersCount++;
+
+
     if(selectedAnswer.correct) {
         correctAnswersCount++;
-        document.querySelector(".text").textContent = correctAnswersCount;
-        console.log(correctAnswersCount);
+
+        document.querySelector(".text").textContent = totalPoints;
+        const checkpoint = checkpointPerLevel[currentLevel]; 
         
-        if(correctAnswersCount == checkpoint || correctAnswersCount == (checkpoint * 2)) {
+
+        if(sumAnswersCount == checkpoint && currentLevel < 2) {
+            currentLevel++;
 
             bubble.moveBubble(); 
             await bubble.waitBubblesEnd(() => {
-                setCheckpointModal(correctAnswersCount);
+                setCheckpointModal(currentLevel);
             });
 
-        } else if (correctAnswersCount == (checkpoint * 3)) {
-
+        } else if (currentLevel === 2 && sumAnswersCount == checkpoint) { 
             isFinal = true;
             bubble.moveBubble(); 
             await bubble.waitBubblesEnd(setFinishModal);
-
         }
         else {
-            console.log(`Это правильный ответ, это ${correctAnswersCount} правильный ответ`);
             answerElements[answerIndex].classList.add('correct');
 
             document.querySelector("#check").textContent = "Поплыли";
@@ -312,47 +343,67 @@ async function handleAnswer(answerIndex) {
                 document.querySelector(".fade").style.display = "none";
             });
 
-            // setTimeout(() => {
-                // resumeGame();
-                // document.querySelector('.modal')?.remove();
-                // document.querySelector(".fade").style.display = "none";
-            // }, 1000);
         }
 
-
-        
-
     } else {
-        setTimeout(() => {
-            resumeGame();
-            document.querySelector('.modal')?.remove();
-            document.querySelector(".fade").style.display = "none";
-        }, 1000);
+
+        const checkpoint = checkpointPerLevel[currentLevel]; 
+
+        if(sumAnswersCount == checkpoint && currentLevel < 2) {
+            currentLevel++;
+
+            bubble.moveBubble(); 
+            await bubble.waitBubblesEnd(() => {
+                setCheckpointModal(currentLevel);
+            });
+
+        } else if (currentLevel === 2 && sumAnswersCount == checkpoint) { 
+            isFinal = true;
+            bubble.moveBubble(); 
+            await bubble.waitBubblesEnd(setFinishModal);
+        } else {
+
+
+            const correctAnswerIndex = lastQuestion.answers.findIndex(answer => answer.correct);
+            answerElements[correctAnswerIndex].classList.add('correct');
+
+            document.querySelector("#check").textContent = "Поплыли";
+            document.querySelector("#check").addEventListener("click", (e) => {
+                resumeGame();
+                document.querySelector('.modal')?.remove();
+                document.querySelector(".fade").style.display = "none";
+            });
+        }
+
+    
     }
 }
 
 function getRandomQuestion() {
-        
+    
+    const checkpoint = checkpointPerLevel[currentLevel]; 
+
     let availableQuestions = gameConfig.questions1.filter(q => !askedQuestions.includes(q));
 
-    if (correctAnswersCount >= checkpoint && correctAnswersCount < (checkpoint * 2)) {
+
+    if (currentLevel == 1) {
         availableQuestions = gameConfig.questions2.filter(q => !askedQuestions.includes(q));
-    } else if (correctAnswersCount >= (checkpoint * 2)) {
+    } else if (currentLevel == 2) {
         availableQuestions = gameConfig.questions3.filter(q => !askedQuestions.includes(q));
     } 
-    
-    if (availableQuestions.length === 0) {
 
-        askedQuestions = [];
+    // if (availableQuestions.length === 0) {
 
-        if (correctAnswersCount < checkpoint) {
-            availableQuestions = gameConfig.questions1;
-        } else if (correctAnswersCount >= checkpoint && correctAnswersCount < (checkpoint * 2)) {
-            availableQuestions = gameConfig.questions2;
-        } else if (correctAnswersCount >= (checkpoint * 2)) {
-            availableQuestions = gameConfig.questions3;
-        }
-    }
+    //     // askedQuestions = [];
+
+    //     // if (correctAnswersCount < checkpoint) {
+    //     //     availableQuestions = gameConfig.questions1;
+    //     // } else if (correctAnswersCount >= checkpoint && correctAnswersCount < (checkpoint * 2)) {
+    //     //     availableQuestions = gameConfig.questions2;
+    //     // } else if (correctAnswersCount >= (checkpoint * 2)) {
+    //     //     availableQuestions = gameConfig.questions3;
+    //     // }
+    // }
 
     const randomIndex = Math.floor(Math.random() * availableQuestions.length);
     const question = availableQuestions[randomIndex];
@@ -398,13 +449,13 @@ function setQuestionModal(question) {
 function setCheckpointModal(point) {
 
     const checkpointTitle = {
-        [checkpoint]: "Уровень 2 <br/> PT Sandbox",
-        [checkpoint * 2]: "Уровень 3 <br/> PT NAD + PT Sandbox <br/> (PT Anti-APT)",
+        [1]: "Уровень 2 <br/> PT Sandbox",
+        [2]: "Уровень 3 <br/> PT NAD + PT Sandbox <br/> (PT Anti-APT)",
     };
 
     const checkpointMessages = {
-        [checkpoint]: "<p class='preview'>Уровень 2. На нашего дайвера валится куча посланий в бутылках — в некоторых из них прячутся зловреды. Уничтожай «злые» бутылки эхолокатором и лови сундучки с вопросами. <br/><br/> Будь осторожен — у тебя только три жизни.</p>",
-        [checkpoint * 2]: "<p class='preview'>Уровень 3. Акулы-хакеры решили погубить нашего дайвера — здесь нужна тяжелая артиллерия. Уничтожай акул специальным ружьем и не забывай ловить вопросы. <br/><br/> У тебя по-прежнему три жизни.</p>",
+        [1]: "<p class='preview'>Уровень 2. На нашего дайвера валится куча посланий в бутылках — в некоторых из них прячутся зловреды. Уничтожай «злые» бутылки эхолокатором и лови сундучки с вопросами. <br/><br/> Будь осторожен — у тебя только три жизни.</p>",
+        [2]: "<p class='preview'>Уровень 3. Акулы-хакеры решили погубить нашего дайвера — здесь нужна тяжелая артиллерия. Уничтожай акул специальным ружьем и не забывай ловить вопросы. <br/><br/> У тебя по-прежнему три жизни.</p>",
     };
 
     const title = checkpointTitle[point] || "";
@@ -416,8 +467,18 @@ function setCheckpointModal(point) {
         bgImage: "",
         onButtonClick: async (modal) => {
             bubble.moveBubble(); 
-            await bubble.waitBubblesEnd(resumeGame);
+            if(correctAnswersCount === sumAnswersCount) {
+                allAnswersCorrect = true;
+            } else {
+                allAnswersCorrect = false;
+            }
+            levelCompleted = true;
+            updateScore();
+            document.querySelector(".text").textContent = totalPoints;
+            sumAnswersCount = 0;
+            correctAnswersCount = 0;
             playerLives = 3;
+            await bubble.waitBubblesEnd(resumeGame);
             document.querySelector('.modal')?.remove();
             document.querySelector(".fade").style.display = "none";
         },
@@ -434,6 +495,14 @@ function setCheckpointModal(point) {
 }
 
 function setFinishModal() {
+    if(correctAnswersCount === sumAnswersCount) {
+        allAnswersCorrect = true;
+    } else {
+        allAnswersCorrect = false;
+    }
+    levelCompleted = true;
+    updateScore();
+
     createModal({
         className: "final",
         buttonExit: true,
@@ -451,7 +520,7 @@ function setFinishModal() {
         slides: [
             {
                 title: isFinal ? "Победа!" : `Проигрыш`,
-                content: isFinal ? `<p class="finish-text">Ты настоящий эксперт в сетевой безопасности. Твой сертификат уже лежит в меню чат-бота —  покажи его на стойке выдачи мерча, чтобы забрать приз</p>` : `<p class="finish-text">Жаль, у тебя закончились жизни. Попробуй еще раз через 10 минут, а пока послушай доклады!</p>`,
+                content: isFinal ? `<p class="finish-text">Ты настоящий эксперт в сетевой безопасности. Твой сертификат уже лежит в меню чат-бота —  покажи его на стойке выдачи мерча, чтобы забрать приз</p><br/><p class="code">${generateUniqueCode(1234)}</p>` : `<p class="finish-text">Жаль, у тебя закончились жизни. Попробуй еще раз через 10 минут, а пока послушай доклады!</p>`,
             }
         ]
     });
@@ -464,6 +533,15 @@ function setResultModal(win) {
     }
     pauseGame();
     finalAnimation();
+}
+
+function updateScore() {
+    if (levelCompleted) {
+        totalPoints += 3;
+        if (allAnswersCorrect) {
+            totalPoints += 2;
+        }
+    }
 }
 
 function setStartModal() {
@@ -541,7 +619,7 @@ function updateGame() {
 
         if (checkCollision(player, element)) {
             const currentTime = Date.now();
-            if (element.type === 1) { // Враг
+            if (element.type === 1) {
      
                 if (playerLives <= 0 && !isEnd) {
                     setResultModal();
@@ -610,7 +688,7 @@ function resetGame() {
     playerLives = 3;
     elements = [];
     player.x = LINES_X[1];
-    document.querySelector(".text").textContent = 0;
+    // document.querySelector(".text").textContent = 0;
     isEnd = false;
     gamePaused = false;
     askedQuestions = [];
@@ -640,9 +718,10 @@ canvas.addEventListener('touchstart', (event) => {
 function attack() {
     let closestElement = null;
     let minDistance = Infinity; 
+    const tolerance = 50;
 
     elements.forEach((element, index) => {
-        if (element.x === player.x && element.type == 1) { 
+        if (element.type == 1 && Math.abs(element.x - player.x) <= tolerance) { 
             const distance = Math.abs(element.y - player.y);
 
             if (distance < minDistance) {
@@ -654,14 +733,42 @@ function attack() {
 
     if (closestElement !== null) {
         elements.splice(closestElement, 1);
+
+        player.isAttacking = true;
+
+        setTimeout(() => {
+            player.isAttacking = false;
+        }, 1000);
     }
 
-    player.isAttacking = true;
-
-    setTimeout(() => {
-        player.isAttacking = false;
-    }, 1000);
 }
+
+
+// function attack() {
+//     let closestElement = null;
+//     let minDistance = Infinity; 
+
+//     elements.forEach((element, index) => {
+//         if (element.x === player.x && element.type == 1) { 
+//             const distance = Math.abs(element.y - player.y);
+
+//             if (distance < minDistance) {
+//                 minDistance = distance;
+//                 closestElement = index;
+//             }
+//         }
+//     });
+
+//     if (closestElement !== null) {
+//         elements.splice(closestElement, 1);
+//     }
+
+//     player.isAttacking = true;
+
+//     setTimeout(() => {
+//         player.isAttacking = false;
+//     }, 1000);
+// }
 
 function highlightLine() {
     const playerLineIndex = LINES_X.indexOf(player.x);
