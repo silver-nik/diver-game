@@ -44,77 +44,77 @@ const gameConfig = {
                 { text: "Нет. PT NAD не имеет таких сигнатур", correct: false }
             ]
         },
-        {
-            question: "Умеет ли PT NAD отправлять отчеты на почту?",
-            answers: [
-                { text: "Да", correct: true },
-                { text: "Нет", correct: false }
-            ]
-        },
-        {
-            question: "Какого метода обнаружения угроз нет в PT NAD?",
-            answers: [
-                { text: "сигнатурный", correct: false },
-                { text: "ML", correct: false },
-                { text: "AI", correct: true }
-            ]
-        },
+        // {
+        //     question: "Умеет ли PT NAD отправлять отчеты на почту?",
+        //     answers: [
+        //         { text: "Да", correct: true },
+        //         { text: "Нет", correct: false }
+        //     ]
+        // },
+        // {
+        //     question: "Какого метода обнаружения угроз нет в PT NAD?",
+        //     answers: [
+        //         { text: "сигнатурный", correct: false },
+        //         { text: "ML", correct: false },
+        //         { text: "AI", correct: true }
+        //     ]
+        // },
 
-        {
-            question: "Как в PT NAD реализована проверка файлов?",
-            answers: [
-                { text: "На основе индикаторов компрометации", correct: false },
-                { text: "При помощи интеграции с PT Sandbox", correct: false },
-                { text: "Оба варианта верны", correct: true }
-            ]
-        },
+        // {
+        //     question: "Как в PT NAD реализована проверка файлов?",
+        //     answers: [
+        //         { text: "На основе индикаторов компрометации", correct: false },
+        //         { text: "При помощи интеграции с PT Sandbox", correct: false },
+        //         { text: "Оба варианта верны", correct: true }
+        //     ]
+        // },
 
-        {
-            question: "Какой тип хэша используется в качестве индикатора компрометации?",
-            answers: [
-                { text: "md5", correct: true },
-                { text: "sha1", correct: false },
-                { text: "sha256", correct: false },
-                { text: "sha512", correct: false }
-            ]
-        },
+        // {
+        //     question: "Какой тип хэша используется в качестве индикатора компрометации?",
+        //     answers: [
+        //         { text: "md5", correct: true },
+        //         { text: "sha1", correct: false },
+        //         { text: "sha256", correct: false },
+        //         { text: "sha512", correct: false }
+        //     ]
+        // },
 
-        {
-            question: "Может ли PT NAD выявлять нестойкие пароли?",
-            answers: [
-                { text: "Да, только в нешифрованном трафике", correct: true },
-                { text: "Да, во всем трафике", correct: false },
-                { text: "Нет", correct: false }
-            ]
-        },
-        {
-            question: "Можно ли скачать дамп трафика, в котором обнаружена атака?",
-            answers: [
-                { text: "Да", correct: true },
-                { text: "Нет", correct: false }
-            ]
-        },
-        {
-            question: "Может ли PT NAD расшифровывать трафик?",
-            answers: [
-                { text: "Нет", correct: true },
-                { text: "Да", correct: false }
-            ]
-        },
-        {
-            question: "Может ли PT NAD находить атаки в шифрованном трафике?",
-            answers: [
-                { text: "Да, при помощи поиска аномалий и сигнатурного анализа", correct: true },
-                { text: "Нет, так как PT NAD не может расшифровывать трафик", correct: false }
-            ]
-        },
-        {
-            question: "Можно ли сохранять поисковые фильтры?",
-            answers: [
-                { text: "Да", correct: true },
-                { text: "Нет", correct: false }
-            ]
-        }
+        // {
+        //     question: "Может ли PT NAD выявлять нестойкие пароли?",
+        //     answers: [
+        //         { text: "Да, только в нешифрованном трафике", correct: true },
+        //         { text: "Да, во всем трафике", correct: false },
+        //         { text: "Нет", correct: false }
+        //     ]
+        // },
+        // {
+        //     question: "Можно ли скачать дамп трафика, в котором обнаружена атака?",
+        //     answers: [
+        //         { text: "Да", correct: true },
+        //         { text: "Нет", correct: false }
+        //     ]
+        // },
+        // {
+        //     question: "Может ли PT NAD расшифровывать трафик?",
+        //     answers: [
+        //         { text: "Нет", correct: true },
+        //         { text: "Да", correct: false }
+        //     ]
+        // },
+        // {
+        //     question: "Может ли PT NAD находить атаки в шифрованном трафике?",
+        //     answers: [
+        //         { text: "Да, при помощи поиска аномалий и сигнатурного анализа", correct: true },
+        //         { text: "Нет, так как PT NAD не может расшифровывать трафик", correct: false }
+        //     ]
+        // },
+        // {
+        //     question: "Можно ли сохранять поисковые фильтры?",
+        //     answers: [
+        //         { text: "Да", correct: true },
+        //         { text: "Нет", correct: false }
+        //     ]
+        // }
     ],
 
     questions2: [
@@ -126,84 +126,84 @@ const gameConfig = {
                 { text: "4", correct: false }
             ]
         },
-        {
-            question: "Как называются техники, которые противодействуют обнаружению виртуальной среды?",
-            answers: [
-                { text: "Anti-gravitation", correct: false },
-                { text: "Anti-evasion", correct: true },
-                { text: "Anti-DDoS", correct: false },
-                { text: "Anti-APT", correct: false }
-            ]
-        },
-        {
-            question: "Как называется вредоносная программа, которая может «возрождаться» как феникс после удаления и перезагрузки ОС? Кстати, PT Sandbox может ловить такое ВПО ",
-            answers: [
-                { text: "Буткит", correct: false },
-                { text: "Шифровальщик", correct: false },
-                { text: "Руткит", correct: true },
-                { text: "Вайпер", correct: false }
-            ]
-        },
-        {
-            question: "Сколько виртуальных машин на одной ноде будет доступно в PT Sandbox версии 5.15?",
-            answers: [
-                { text: "15", correct: false },
-                { text: "20", correct: false },
-                { text: "30", correct: true },
-                { text: "40", correct: false }
-            ]
-        },
-        {
-            question: "На каких уровнях PT Sandbox обнаруживает ВПО?",
-            answers: [
-                { text: "Гипервизор", correct: false },
-                { text: "Виртуальная машина", correct: false },
-                { text: "Ядро ОС", correct: false },
-                { text: "Все перечисленные", correct: true }
-            ]
-        },
-        {
-            question: "По каким протоколам PT Sandbox интегрируется с другими системами ИБ и ИТ?",
-            answers: [
-                { text: "API", correct: false },
-                { text: "ICAP", correct: false },
-                { text: "Оба", correct: true }
-            ]
-        },
-        {
-            question: "Как часто выходят обновления PT Sandbox?",
-            answers: [
-                { text: "Раз в месяц", correct: true },
-                { text: "Раз в квартал", correct: false },
-                { text: "Раз в полгода", correct: false },
-                { text: "Раз в год", correct: false }
-            ]
-        },
+        // {
+        //     question: "Как называются техники, которые противодействуют обнаружению виртуальной среды?",
+        //     answers: [
+        //         { text: "Anti-gravitation", correct: false },
+        //         { text: "Anti-evasion", correct: true },
+        //         { text: "Anti-DDoS", correct: false },
+        //         { text: "Anti-APT", correct: false }
+        //     ]
+        // },
+        // {
+        //     question: "Как называется вредоносная программа, которая может «возрождаться» как феникс после удаления и перезагрузки ОС? Кстати, PT Sandbox может ловить такое ВПО ",
+        //     answers: [
+        //         { text: "Буткит", correct: false },
+        //         { text: "Шифровальщик", correct: false },
+        //         { text: "Руткит", correct: true },
+        //         { text: "Вайпер", correct: false }
+        //     ]
+        // },
+        // {
+        //     question: "Сколько виртуальных машин на одной ноде будет доступно в PT Sandbox версии 5.15?",
+        //     answers: [
+        //         { text: "15", correct: false },
+        //         { text: "20", correct: false },
+        //         { text: "30", correct: true },
+        //         { text: "40", correct: false }
+        //     ]
+        // },
+        // {
+        //     question: "На каких уровнях PT Sandbox обнаруживает ВПО?",
+        //     answers: [
+        //         { text: "Гипервизор", correct: false },
+        //         { text: "Виртуальная машина", correct: false },
+        //         { text: "Ядро ОС", correct: false },
+        //         { text: "Все перечисленные", correct: true }
+        //     ]
+        // },
+        // {
+        //     question: "По каким протоколам PT Sandbox интегрируется с другими системами ИБ и ИТ?",
+        //     answers: [
+        //         { text: "API", correct: false },
+        //         { text: "ICAP", correct: false },
+        //         { text: "Оба", correct: true }
+        //     ]
+        // },
+        // {
+        //     question: "Как часто выходят обновления PT Sandbox?",
+        //     answers: [
+        //         { text: "Раз в месяц", correct: true },
+        //         { text: "Раз в квартал", correct: false },
+        //         { text: "Раз в полгода", correct: false },
+        //         { text: "Раз в год", correct: false }
+        //     ]
+        // },
 
-        {
-            question: "Какие возможности по снижению нагрузки на поведенческий анализ есть в PT Sandbox?",
-            answers: [
-                { text: "Дополнительный антивирус", correct: false },
-                { text: "Настройки предварительной фильтрации", correct: true },
-                { text: "Ручная проверка файлов", correct: false }
-            ]
-        },
-        {
-            question: "Для каких целей используются технологии машинного обучения в PT Sandbox?",
-            answers: [
-                { text: "Для улучшения качества обнаружения", correct: true },
-                { text: "Для проверки по хеш-суммам", correct: false },
-                { text: "Для «галочки»", correct: false }
-            ]
-        },
-        {
-            question: "Какое ограничение по объему принимаемых объектов есть у инсталляции PT Sandbox",
-            answers: [
-                { text: "Не более 10 000 в час", correct: false },
-                { text: "Не более 100 000 в час", correct: false },
-                { text: "Нет ограничения благодаря возможности горизонтального масштабирования", correct: true }
-            ]
-        }
+        // {
+        //     question: "Какие возможности по снижению нагрузки на поведенческий анализ есть в PT Sandbox?",
+        //     answers: [
+        //         { text: "Дополнительный антивирус", correct: false },
+        //         { text: "Настройки предварительной фильтрации", correct: true },
+        //         { text: "Ручная проверка файлов", correct: false }
+        //     ]
+        // },
+        // {
+        //     question: "Для каких целей используются технологии машинного обучения в PT Sandbox?",
+        //     answers: [
+        //         { text: "Для улучшения качества обнаружения", correct: true },
+        //         { text: "Для проверки по хеш-суммам", correct: false },
+        //         { text: "Для «галочки»", correct: false }
+        //     ]
+        // },
+        // {
+        //     question: "Какое ограничение по объему принимаемых объектов есть у инсталляции PT Sandbox",
+        //     answers: [
+        //         { text: "Не более 10 000 в час", correct: false },
+        //         { text: "Не более 100 000 в час", correct: false },
+        //         { text: "Нет ограничения благодаря возможности горизонтального масштабирования", correct: true }
+        //     ]
+        // }
     ],
 
     questions3: [
@@ -214,40 +214,40 @@ const gameConfig = {
                 { text: "ICAP", correct: true }
             ]
         },
-        {
-            question: "Как можно отслеживать вердикты, получаемые от PT Sandbox?",
-            answers: [
-                { text: "При помощи построения дашбордов", correct: false },
-                { text: "При помощи поиска по ключевому слову rpt.verdict", correct: false },
-                { text: "Оба варианта верны", correct: true }
-            ]
-        },
-        {
-            question: "Умеет ли PT Anti-APT анализировать шифрованный трафик?",
-            answers: [
-                { text: "Нет", correct: false },
-                { text: "Да, весь трафик", correct: false },
-                { text: "Да, только тот, который генерирует ВПО в процессе анализа в Sandbox", correct: true }
-            ]
-        },
-        {
-            question: "Назовите основные задачи PT AntiAPT",
-            answers: [
-                { text: "Сокращение времени скрытого присутствия злоумышленника в сети", correct: false },
-                { text: "Выявление атаки по большому числу признаков", correct: false },
-                { text: "Защита от новейших угроз", correct: false },
-                { text: "Все перечисленное", correct: true }
-            ]
-        },
-        {
-            question: "Из каких основных компонентов состоит решение PT Anti-APT?",
-            answers: [
-                { text: "MaxPatrol SIEM, PT NAD, PT Sandbox", correct: false },
-                { text: "PT NAD, PT Sandbox", correct: true },
-                { text: "PT NAD, PT Sandbox, PT Threat Analyzer", correct: false },
-                { text: "PT NAD, MaxPatrol SIEM", correct: false }
-            ]
-        },
+        // {
+        //     question: "Как можно отслеживать вердикты, получаемые от PT Sandbox?",
+        //     answers: [
+        //         { text: "При помощи построения дашбордов", correct: false },
+        //         { text: "При помощи поиска по ключевому слову rpt.verdict", correct: false },
+        //         { text: "Оба варианта верны", correct: true }
+        //     ]
+        // },
+        // {
+        //     question: "Умеет ли PT Anti-APT анализировать шифрованный трафик?",
+        //     answers: [
+        //         { text: "Нет", correct: false },
+        //         { text: "Да, весь трафик", correct: false },
+        //         { text: "Да, только тот, который генерирует ВПО в процессе анализа в Sandbox", correct: true }
+        //     ]
+        // },
+        // {
+        //     question: "Назовите основные задачи PT AntiAPT",
+        //     answers: [
+        //         { text: "Сокращение времени скрытого присутствия злоумышленника в сети", correct: false },
+        //         { text: "Выявление атаки по большому числу признаков", correct: false },
+        //         { text: "Защита от новейших угроз", correct: false },
+        //         { text: "Все перечисленное", correct: true }
+        //     ]
+        // },
+        // {
+        //     question: "Из каких основных компонентов состоит решение PT Anti-APT?",
+        //     answers: [
+        //         { text: "MaxPatrol SIEM, PT NAD, PT Sandbox", correct: false },
+        //         { text: "PT NAD, PT Sandbox", correct: true },
+        //         { text: "PT NAD, PT Sandbox, PT Threat Analyzer", correct: false },
+        //         { text: "PT NAD, MaxPatrol SIEM", correct: false }
+        //     ]
+        // },
     ],
     
 };
@@ -266,7 +266,7 @@ let calculateLines = (canvasWidth) => {
     return [leftLine, centerLine, rightLine];
 };
 
-let generateUniqueCode = (userId = 124) => {
+let generateUniqueCode = (userId) => {
     if (typeof userId !== 'number') {
         throw new Error('Должен быть числом');
     }
@@ -478,7 +478,10 @@ let correctAnswersCount = 0;
 let sumAnswersCount  = 0;
 let isFinal = false;
 
-let totalPoints = 0;  
+let totalPoints = 0;
+let enemiesKilled = 0; //upd
+let pointsByLevels = []; // upd
+let killedByLevels = []; // upd
 let levelCompleted = false; 
 let allAnswersCorrect = false;
 
@@ -599,7 +602,7 @@ function createRandomElement() {
 }
 
 async function postResource(url, data) {
-    if(typeof data.tg_id === 'number' && typeof data.result === 'number') {
+    if(typeof data.tg_id === 'number') {
         try {
             await fetch(url, {
                 method: 'POST',
@@ -609,7 +612,7 @@ async function postResource(url, data) {
                 body: JSON.stringify(data)
             })
             .then((response) => response.json())
-            .then((json) => console.log("scss"))
+            .then((json) => console.log(json))
             .catch(error => {
                 console.log(error);
             }); 
@@ -785,7 +788,7 @@ async function handleAnswer(answerIndex) {
     if(selectedAnswer.correct) {
         correctAnswersCount++;
 
-        document.querySelector(".text").textContent = totalPoints;
+        document.querySelector(".pt-question .text").textContent = totalPoints;
         const checkpoint = checkpointPerLevel[currentLevel]; 
         
 
@@ -930,13 +933,16 @@ function setCheckpointModal(point) {
             }
             levelCompleted = true;
             updateScore();
-            document.querySelector(".text").textContent = totalPoints;
+            killedByLevels.push(enemiesKilled); // upd
+            enemiesKilled = 0; // upd
+            document.querySelector(".pt-question .text").textContent = totalPoints;
+            document.querySelector(".enemies .text").textContent = 0; //upd
             sumAnswersCount = 0;
             correctAnswersCount = 0;
             playerLives = 3;
             await bubble.waitBubblesEnd(resumeGame);
             document.querySelector('.modal')?.remove();
-            document.querySelector(".fade").style.display = "none";
+            document.querySelector(".fade").style.displgitay = "none";
         },
         callback: () => {},
         slides: [
@@ -957,15 +963,17 @@ function setFinishModal() {
         allAnswersCorrect = false;
     }
     levelCompleted = true;
-    updateScore();
+    updateScore(); 
+    killedByLevels.push(enemiesKilled); // upd
 
     let uniqueCode = localStorage.getItem('uid') ? generateUniqueCode(parseInt(localStorage.getItem('uid'))) : generateUniqueCode(Math.floor(Math.random() * 100));
 
-    // postResource(gameConfig.url, {
-    //     tg_id: parseInt(localStorage.getItem('uid')),
-    //     result: totalPoints,
-    //     code: uniqueCode
-    // });
+    postResource(gameConfig.url, {
+        tg_id: parseInt(localStorage.getItem('uid')),
+        result: pointsByLevels, // upd
+        killed: killedByLevels, // upd
+        code: uniqueCode 
+    });
 
     createModal({
         className: "final",
@@ -1000,12 +1008,26 @@ function setResultModal(win) {
 }
 
 function updateScore() {
-    if (levelCompleted) {
+
+    // upd
+
+    if(levelCompleted && allAnswersCorrect) {
+        totalPoints += 5;
+        pointsByLevels.push(5);
+    } else if(levelCompleted) {
         totalPoints += 3;
-        if (allAnswersCorrect) {
-            totalPoints += 2;
-        }
+        pointsByLevels.push(3);
     }
+
+    // upd
+
+    // if (levelCompleted) {
+    //     totalPoints += 3;
+
+    //     if (allAnswersCorrect) {
+    //         totalPoints += 2;
+    //     }
+    // }
 }
 
 function setStartModal() {
@@ -1021,12 +1043,18 @@ function setStartModal() {
             document.querySelector('.modal')?.remove();
             document.querySelector(".fade").style.display = "none";
             document.querySelector(".game__status-bar").classList.add("active");
+            document.querySelectorAll(".arrow").forEach(el => el.classList.add("active")); // upd
         },
         callback: () => {},
         slides: [
             {
                 title: "Играем!",
-                content: "<p class='preview'>Тебе нужно пройти 3 уровня — уничтожай угрозы, лови сундучки с вопросами и отвечай на них. Подробнее о правилах читай в описании бота. <br/><br/> Чтобы уничтожить угрозу, перемести дайвера в один ряд с ней и нажми красную кнопку. <br/><br/> Чтобы поймать сундучок с вопросом перемести дайвера в соответствующий ряд. <br/><br/> У тебя 3 жизни. </p>",
+                // content: "<p class='preview'>Тебе нужно пройти 3 уровня — уничтожай угрозы, лови сундучки с вопросами и отвечай на них. Подробнее о правилах читай в описании бота. <br/><br/> Чтобы уничтожить угрозу, перемести дайвера в один ряд с ней и нажми красную кнопку. <br/><br/> Чтобы поймать сундучок с вопросом перемести дайвера в соответствующий ряд. <br/><br/> У тебя 3 жизни. </p>",
+                content: `<p class='preview'>Чтобы уничтожить угрозу, перемести дайвера в один ряд с ней и нажми красную кнопку. <br/><br/> Чтобы поймать сундучок с вопросом перемести дайвера в соответствующий ряд.
+                        <br/><br/>
+                        Подробнее о правилах и призах читай в описании бота.
+                        <br/><br/>
+                        Три уровня, три жизни на каждом.</p>`,
                 buttonId: "next1",
                 buttonText: "Далее"
             },
@@ -1203,7 +1231,11 @@ function attack() {
     if (closestElement !== null) {
         elements.splice(closestElement, 1);
 
+        enemiesKilled++; //upd
+
         player.isAttacking = true;
+
+        document.querySelector(".enemies .text").textContent = enemiesKilled; //upd
 
         setTimeout(() => {
             player.isAttacking = false;
@@ -1245,4 +1277,6 @@ attackButton.addEventListener('click', attack);
 window.onload = resizeCanvas;
 window.onresize = resizeCanvas;
 setStartModal();
+// isFinal = true;
+// setFinishModal();
 bubble.setBubbleArr();

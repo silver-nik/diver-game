@@ -254,7 +254,7 @@ input[type="radio"]:checked::before {
 }
 
 .points {
-    width: 139px;
+    width: 100px;
     height: 48px;
     z-index: 100000;
     color: #fff;
@@ -273,6 +273,40 @@ input[type="radio"]:checked::before {
     justify-content: space-between;
 }
 
+/* upd */
+
+.points.enemies {
+    margin-right: 20px;
+}
+
+.points.enemies .icon {
+    display: flex;
+    padding-right: 2px;
+}
+
+.arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.arrow.left {
+    left: -50px; 
+}
+
+.arrow.right {
+    right: -50px;
+}
+
+.arrow.left.active {
+    animation: move-left 1s forwards, shake-left 1s infinite alternate;
+}
+
+.arrow.right.active {
+    animation: move-right 1s forwards, shake-right 1s infinite alternate;
+}
+
+/* upd */
 
 .text {
     flex: 1;
@@ -297,7 +331,7 @@ input[type="radio"]:checked::before {
     padding: 0 15px 0 0;
     box-sizing: border-box;
     justify-content: space-between;
-    margin-left: 42px;
+    margin-left: 20px;
 }
 
 .icon-heart {
@@ -637,6 +671,11 @@ input[type="radio"]:checked::before {
     width: 100%;
 }
 
+.finish-modal .finish-text {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
 #play-again {
     margin-top: 34px;
     margin-bottom: 20px;
@@ -677,6 +716,46 @@ input[type="radio"]:checked::before {
         transform: translate(0, 0);
     }
 }
+
+/* upd */
+
+@keyframes move-left {
+    0% {
+        left: -50px;
+    }
+    100% {
+        left: 20px;
+    }
+}
+
+@keyframes move-right {
+    0% {
+        right: -50px;
+    }
+    100% {
+        right: 20px;
+    }
+}
+
+@keyframes shake-left {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(2px); 
+    }
+}
+
+@keyframes shake-right {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-2px);
+    }
+}
+
+/* upd */
 
 @media(max-width: 340px) {
     .preview-wrapper {

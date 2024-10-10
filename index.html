@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>PT Game</title>
     <style>
         canvas {
@@ -21,7 +21,15 @@
         <div class="game">
             <img src="./assets/logo.svg" class="logo">
             <div class="game__status-bar">
-                <div class="points">
+                <!-- upd -->
+                <div class="enemies points">
+                    <span class="text">0</span>
+                    <div class="icon">
+                        <img src="./assets/icon-d.svg" alt="" class="w-icon h-icon icon">
+                    </div>
+                </div>
+                <!-- upd -->
+                <div class="points pt-question">
                     <span class="text">0</span>
                 </div>
                 <div class="health">
@@ -34,6 +42,12 @@
             <canvas id="gameCanvas" width="400" height="600"></canvas>
 
             <div class="game__active-btn">
+                <!-- upd -->
+                <div class="arrows">
+                    <span class="arrow left"><img src="./assets/left.svg" alt=""></span>
+                    <span class="arrow right"><img src="./assets/right.svg" alt=""></span>
+                </div>
+                <!-- upd -->
                 <button id="attackButton" class="active-btn">Уничтожить угрозу</button>
             </div>
 
@@ -53,8 +67,10 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         const bot = window.Telegram.WebApp;
-        bot.headerColor = '#132c46'
-        bot.backgroundColor = '#132c46'
+        // upd (new color)
+        bot.headerColor = '#081229'
+        bot.backgroundColor = '#081229'
+        // upd
         if (localStorage.fl === undefined) {
             localStorage.clear()
             localStorage.fl = false
